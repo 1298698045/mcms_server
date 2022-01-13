@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=.3; minimum-scale=.3; maximum-scale=.3"> -->
+    <!-- <meta name="viewport" content="width=1300px"/> -->
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>山西省中医院</title>
+    <link rel="shortcut icon" href="http://localhost:8080/template/1/new_hospital/images/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="http://localhost:8080/template/1/new_hospital/css/swiper-3.4.2.min.css" />
+    <link rel="stylesheet" href="http://localhost:8080/template/1/new_hospital/css/public.css" />
+    <link rel="stylesheet" href="http://localhost:8080/template/1/new_hospital/css/index.css" />
+    <link rel="stylesheet" href="http://localhost:8080/template/1/new_hospital/css/head.css" />
+    <link rel="stylesheet" href="http://localhost:8080/template/1/new_hospital/css/footer.css">
+    <script type="text/javascript" src="/static/plugins/vue/2.6.9/vue.js"></script>
+    <script type="text/javascript" src="/static/plugins/vue-router/3.5.1/vue-router.js"></script>
+    <script src="http://localhost:8080/template/1/new_hospital/js/app.js"></script>
+    <script src="/static/plugins/axios/0.18.0/axios.min.js"></script>
+    <script src="/static/plugins/qs/6.6.0/qs.min.js"></script>
+    <script type="text/javascript" src="/static/plugins/ms/1.0.0/ms.http.js"></script>
+<script type="text/x-template" id="expert">
+    <div>
+
+        <div class="swiper-container1">
+            <div class="swiper-wrapper headPhoto">
+                <div class="swiper-slide" v-for="line in lines">
+                    <div class="box">
+                        <div class="block">
+                            <div class="hover" @click="handleRouter(line)">
+                                <div class="box_child">
+                                    <div class="pad">
+                                        <div class="img">
+                                            <img :src="line.portraitUrl" alt="" />
+                                        </div>
+                                        <p class="name">{{line.name}}</p>
+                                        <p class="position">{{line.technicalTitle}}</p>
+                                    </div>
+                                </div>
+                                <div class="box_active_wrap">
+                                    <div class="box_active">
+                                        <div class="descWrap">
+                                            <p class="text">
+                                                {{line.briefIntro || ''}}
+                                            </p>
+                                            <p class="title" v-show="line.briefIntro&&line.briefIntro.length<109">擅长：</p>
+                                            <p class="text" v-show="line.briefIntro&&line.briefIntro.length<109">
+                                                {{line.goodAt}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="back_bord">
+                                                                <div class="back" @click="handleDept(line)">
+                                    {{line.departmentName}}
+                                </div>
+                            </div>
+                            <div class="back_row">
+                                <a class="cel_o" href="#">挂号</a>
+                                <a class="cel_t"  target="_blank" href="https://weixin.sxyygh.com/#/hospital/onlinevisit/home?hosId=1023&_t=eyJzaG93Ijp0cnVlLCJ0aXRsZSI6IuWxseilv%252BecgeS4reWMu%252BmZoiJ9">问诊</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-pagination1"></div>
+        </div>
+        <div class="mobileExpert">
+            <div class="swiper-container-mobile">
+                <div class="swiper-wrapper headPhoto-mobile">
+                    <div class="swiper-slide" v-for="item in linesMobile">
+                        <div class="box" v-for="line in item">
+                            <div class="block">
+                                <div class="hover" @click="handleRouter(line)">
+                                    <div class="box_child">
+                                        <div class="pad">
+                                            <div class="img">
+                                                <img :src="line.portraitUrl" alt="" />
+                                            </div>
+                                            <p class="name">{{line.name}}</p>
+                                            <p class="position">{{line.technicalTitle}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box_active_wrap">
+                                    <div class="box_active">
+                                        <div class="descWrap">
+                                            <p class="text">
+                                                {{line.briefIntro || ''}}
+                                            </p>
+                                            <p class="title" v-show="line.briefIntro&&line.briefIntro.length<109">擅长：</p>
+                                            <p class="text" v-show="line.briefIntro&&line.briefIntro.length<109">
+                                                {{line.goodAt}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="back_bord">
+                                    <div class="back" @click="handleDept(line)">
+                                        {{line.departmentName}}
+                                    </div>
+                                </div>
+                                <div class="back_row">
+                                    <a class="cel_o" href="#">挂号</a>
+                                    <a class="cel_t"  target="_blank" href="https://weixin.sxyygh.com/#/hospital/onlinevisit/home?hosId=1023&_t=eyJzaG93Ijp0cnVlLCJ0aXRsZSI6IuWxseilv%252BecgeS4reWMu%252BmZoiJ9">问诊</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination-mobile"></div>
+            </div>
+            <div class="browseMore active"  @click="goto('http://localhost:8080/html/web/expert/index.html')">
+                浏览更多专家介绍&nbsp;&nbsp;+
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+Vue.component('Expert', {
+    template: '#expert',
+    data: function() {
+        return {
+            lines: [],
+            linesMobile: []
+        }
+    },
+    methods: {
+        goto: function(url) {
+            window.open(url)
+        },
+        list: function() {
+            var that = this
+                var page = {pageNo: 1,pageSize:100}
+                ms.http.post("/cms/expert/list.do", Object.assign({}, {
+                    contentType: 'c'
+                }, page)).then(function(res) {
+                    //that.page.contentCount = res.data.total
+                    var list = res.data.rows.map(function(row) {
+                        let name = row.name.split('_');
+                        if(name.length>1){
+                            row.name = name[0];
+                            row.sortIdx = name[1];
+                        }
+                        if (row.portrait) {
+                            var img = JSON.parse(row.portrait)
+                            if (img.length > 0) {
+                                row.portraitUrl = 'http://localhost:8080' + img[0].url
+                            }
+                        }
+                        return row
+                    })
+                    that.lines = list.sort(that.compare('sortIdx'))
+                    var result = [];
+                    for(var i = 0,len = that.lines.length;i < len; i+=6){
+                        result.push( that.lines.slice(i,i+6));
+                    }
+                    that.linesMobile = result;
+                    console.log('lines:', that.lines)
+                    console.log('mobile:',that.linesMobile)
+                }).catch(function(err) {
+                    console.error('error:', err)
+                })
+        },
+        compare:function(property){
+            return function(a,b){
+                var val1 = a[property];
+                var val2 = b[property];
+                return val1 - val2;
+            }
+        },
+        handleRouter(item){
+            window.open("http://localhost:8080/html/web/page/department/doctorDetail.html?id="+ item.id )
+        },
+        handleDept(item){
+            window.open("http://localhost:8080/html/web"+ item.departmentPath+'/index.html');
+        }
+    },
+    created: function() {
+    this.list()
+    }
+})
+</script>
+</head>
+<body>
+    <div id="app" class="wrap" v-cloak>
+<div class="headerWrap" favicon="http://localhost:8080/template/1/new_hospital/images/favicon.png">
+    <div class="flex_head_container">
+        <div class="back_top">
+        </div>
+        <div class="header_box">
+            <div class="header spacing">
+                <div class="header_child">
+                    <div class="lLogo" @click="gotoHref('http://localhost:8080/html/web/home.html')">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/newLogo.png" alt="">
+                    </div>
+                    <div class="rBox">
+                        <div class="back_icon"  id="edition">
+                            <p class="back_url active h" @click="goto('http://localhost:8080/html/web/home.html')">大众版</p>
+                            <p class="back_url" @click="goto('http://localhost:8080/html/web/employee.html')">员工版</p>
+                        </div>
+                        <div class="search_row">
+                            <form id="searchDataForm" action="http://localhost:8080/mcms/search.do" method="post" class="search_wrap"> 
+                                <div class="searchs">
+                                    <input type="text" class="inp" name="content_title" placeholder="请输入你要查询的内容">
+                                    <i class="serach_icon"></i>
+                                </div>
+                                <div class="btn_text" onclick="document.getElementById('searchDataForm').submit();">
+                                    搜索
+                                </div>
+                            </form>
+                            <div class="hospitalTab">
+                                <div class="topTab maxTab" @click="goto('http://localhost:8080/html/web/department/tijianzhongxin/index.html')">治未病健康体检中心</div>
+                                <div class="topTab minTab" @click="goto('http://localhost:8080/html/web/department/mingyichuzhen/index.html')">名医门诊</div>
+                                <div class="topTab minTab" @click="goto('http://39.100.209.170:9008')">招聘系统</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="nav">
+            <div class="nav_box spacing">
+                <ul class="spacing">
+                    <li>
+                        <span :class="{active: activeMenu=='0'}" @click="gotoHref('http://localhost:8080/html/web/home.html')" @mouseover="onMenuMouseOver('0')" @mouseleave="onMenuMouseLeave">
+                            首页
+                        </span>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1400708134211620865')}"
+                            @click="gotoHref('http://localhost:8080/html/web/hospitalSurvey/index.html')"
+                            @mouseover="onMenuMouseOver('1400708134211620865')"
+                            @mouseleave="onMenuMouseLeave">
+                            医院概况
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>医院概况</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/yuanneidaohang">院内导航</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/jiaotongluxian">交通路线</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/look">院容院貌</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/custom">医院文化</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/hospitalSurvey/info/index.html">医院介绍</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/history">历史沿革</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>院内导航</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/hospitalSurvey/index.html?articleid=1405717855735984130/#/hospitalSurvey/yuanneidaohang">· 新住院楼楼层分布</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/hospitalSurvey/index.html?articleid=1407238301094621186/#/hospitalSurvey/yuanneidaohang">· 门诊楼楼层分布</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/hospitalSurvey/index.html?articleid=1407239032967114754/#/hospitalSurvey/yuanneidaohang">· 东楼楼层分布</a></p> 
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>医院文化</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/hospitalSurvey/index.html?articleid=1407223429527089153/#/hospitalSurvey/custom">· 山西省中医院文明旅游倡议书</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/hospitalSurvey/index.html?articleid=1407223018523045890/#/hospitalSurvey/custom">· 山西省中医院网络文明倡议书</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/hospitalSurvey/index.html?articleid=1407219532662157314/#/hospitalSurvey/custom">· 山西省中医院“文明旅游、礼貌乘车”主题实践活动方案</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/hospitalSurvey/index.html?articleid=1407217822774439937/#/hospitalSurvey/custom">· “医德医风”光荣榜</a></p> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1402955469849456641')}"
+                            @click="gotoHref('http://localhost:8080/html/web/fengyuanjieshao/shenglifenyuan/index.html')"
+                            @mouseover="onMenuMouseOver('1402955469849456641')"
+                            @mouseleave="onMenuMouseLeave">
+                            分院介绍
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>分院介绍</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/fengyuanjieshao/shenglifenyuan/index.html">胜利分院</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/fengyuanjieshao/hepingfenyuan/index.html">和平分院</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>胜利分院</h5>
+                                                <div class="paragraph">
+                                                    为了缓解总院患者停车难、就诊拥挤等不便，山西省中医院于2012年年初在太原市杏花岭区胜利街160号新增设院址成立山西省中医院胜利分院，胜利分院隶属山西省中医院，诊疗方式以门诊为主，是省、市基本医疗保险、铁路医保及农村合作医疗定点机构，医疗资源与总院共享，出诊专家均为山西省中医院副高职称以上专家，汇集山西省中医界名老专家和学术权威。特别方便北城地区群众对中医药医疗的需求。除日常诊疗外分院还提供健康体检服务。
+                                                </div>
+                                                <div class="detail_btn" @click="goto('http://localhost:8080/html/web/fengyuanjieshao/shenglifenyuan/1405736097250619393.html')">查看详细</div>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>和平分院</h5>
+                                                <div class="paragraph">
+                                                    山西省中医院和平分院系山西省卫生厅批准设立的中医医疗机构，是山西省中医院的下属机构，位于万柏林区和平南路336号。和平分院开设六年来，门诊量呈快速增长的态势，年门诊量八万余人次，满足了河西百姓看中医，求名中医的需求。山西省中医院百余名中医及中西医结合专家在分院出诊，为各专业疑难病症病人提供有效治疗技术。影响力波及方圆百里。
+                                                </div>
+                                                <div class="detail_btn" @click="goto('http://localhost:8080/html/web/fengyuanjieshao/hepingfenyuan/1405737841200279553.html')">查看详细</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1400716168132456449')}"
+                            @click="gotoHref('http://localhost:8080/html/web/journalism/index.html')"
+                            @mouseover="onMenuMouseOver('1400716168132456449')"
+                            @mouseleave="onMenuMouseLeave">
+                            新闻中心
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>新闻中心</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/journalism/index.html#/journalism/yiyuanxinwen">医院新闻</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/journalism/index.html#/journalism/meitibaodao">媒体报道</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>医院新闻</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/journalism/yiyuanxinwen/1427875401330446338.html">· 此文为我院白崇智博士和仲启明所做</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/journalism/yiyuanxinwen/1427874633932197890.html">· 山西省中医院 “新冠疫苗接种志愿服务”活动</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/journalism/yiyuanxinwen/1425351818930634753.html">· 筑牢新冠防控的第一道防线——省中医院核酸检测实纪</a></p>
+                                            <p class="newLi" flag="c,hot"><a href="http://localhost:8080/html/web/journalism/yiyuanxinwen/1422490515815911426.html">· 山西省中医院动员部署“打击收受红包加强行风建设”专项行动</a></p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>媒体报道</h5>
+                                            <div class="newLi" flag="c,tv,hot">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/rUNgAka00AY5VXGyWVwvsQ" target="_blank">https://mp.weixin.qq.com/s/rUNgAka00AY5VXGyWVwvsQ</a><br/></p></div>
+                                                <a href="#">· 山西省中医院：“医疗+服务”新模式来了！“方便看中医”在行动！</a>
+                                            </div>
+                                            <div class="newLi" flag="tv,c,hot">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/o4rWZeYi6VJ4zkB1Gleinw" target="_blank">https://mp.weixin.qq.com/s/o4rWZeYi6VJ4zkB1Gleinw</a><br/></p></div>
+                                                <a href="#">· 山西省中医院肿瘤防治宣传周公益活动来了！癌症防治，让我们共同行动</a>
+                                            </div>
+                                            <div class="newLi" flag="tv">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/_iPD8FHxl8LqjeMFwsEoUA" target="_blank">https://mp.weixin.qq.com/s/_iPD8FHxl8LqjeMFwsEoUA</a><br/></p></div>
+                                                <a href="#">· 新春到，福来到！山西省中医院给大家拜年啦！！！</a>
+                                            </div>
+                                            <div class="newLi" flag="c,tv,hot">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/Lkmp170dLLMmG8OOGz5m2w" target="_blank">https://mp.weixin.qq.com/s/Lkmp170dLLMmG8OOGz5m2w</a><br/></p></div>
+                                                <a href="#">· 山西省中医院核酸检测线上预约流程操作说明</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1400723660430274562')}"
+                            @click="gotoHref('http://localhost:8080/html/web/infoOpen/index.html')"
+                            @mouseover="onMenuMouseOver('1400723660430274562')"
+                            @mouseleave="onMenuMouseLeave">
+                            通知公告
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>通知公告</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/yixun">医讯公告</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/zhaopinxinxi">招聘信息</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/zhaobiaogonggao">招标公告</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>招聘信息</h5>
+                                            <p class="newLi" flag="c"><a href="http://localhost:8080/html/web/infoOpen/index.html?articleid=1428173177243160577/#/infoOpen/zhaopinxinxi">· 关于2021年公开招聘合同制人员体检的通知</a></p> 
+                                            <p class="newLi" flag="c"><a href="http://localhost:8080/html/web/infoOpen/index.html?articleid=1427865800069468162/#/infoOpen/zhaopinxinxi">· 2021年公开招聘合同制人员综合成绩公示</a></p> 
+                                            <p class="newLi" flag="c"><a href="http://localhost:8080/html/web/infoOpen/index.html?articleid=1427867742627811330/#/infoOpen/zhaopinxinxi">· 2021年公开招聘合同制护理助产人员公告</a></p> 
+                                            <p class="newLi" flag="c"><a href="http://localhost:8080/html/web/infoOpen/index.html?articleid=1427869245828616193/#/infoOpen/zhaopinxinxi">· 2021年公开招聘合同制人员面试通知</a></p> 
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>招标公告</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/infoOpen/index.html?articleid=1427924522653306882/#/infoOpen/zhaobiaogonggao">· 山西省中医院电梯维保中标公告</a></p> 
+                                            <p class="newLi" flag="c"><a href="http://localhost:8080/html/web/infoOpen/index.html?articleid=1405084115921903618/#/infoOpen/zhaobiaogonggao">· 山西省中医院电梯维保谈判公告</a></p> 
+                                            <p class="newLi" flag="c"><a href="http://localhost:8080/html/web/infoOpen/index.html?articleid=1406955658486591489/#/infoOpen/zhaobiaogonggao">· 山西省中医院不间断电源（CPU）项目中标公告</a></p> 
+                                            <p class="newLi" flag="c"><a href="http://localhost:8080/html/web/infoOpen/index.html?articleid=1406956443882598401/#/infoOpen/zhaobiaogonggao">· 山西省中医院不间断电源（CPU）项目招标公告</a></p> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1403306469080788993')}"
+                            @click="gotoHref('http://localhost:8080/html/web/chuzhendongtai/index.html')"
+                            @mouseover="onMenuMouseOver('1403306469080788993')"
+                            @mouseleave="onMenuMouseLeave">
+                            出诊动态
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>出诊动态</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/chuzhendongtai/index.html#/chuzhendongtai/guahaoxuzhi">挂号须知</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/chuzhendongtai/index.html#/chuzhendongtai/chuzhenchawen">出诊查询</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/chuzhendongtai/index.html#/chuzhendongtai/jiaqichuzhen">假期出诊</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/chuzhendongtai/index.html">出诊信息</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/chuzhendongtai/index.html#/chuzhendongtai/tingzhenxinxi">停诊信息</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="#">预约挂号</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>挂号须知</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/chuzhendongtai/index.html?articleid=1405489524969123841/#/chuzhendongtai/guahaoxuzhi">· 电话预约挂号及取号流程</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/chuzhendongtai/index.html?articleid=1412294544561602562/#/chuzhendongtai/guahaoxuzhi">· 网上预约挂号及取号流程</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/chuzhendongtai/index.html?articleid=1417813738329772034/#/chuzhendongtai/guahaoxuzhi">· 名医门诊挂号须知</a></p> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1400724319233798146')}"
+                            @click="gotoHref('http://localhost:8080/html/web/patient/index.html')"
+                            @mouseover="onMenuMouseOver('1400724319233798146')"
+                            @mouseleave="onMenuMouseLeave">
+                            患者服务
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>患者服务</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/patient/index.html#/patient/zhuyuanzhinan">住院指南</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/patient/index.html#/patient/yibaozhinan">医保指南</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/patient/index.html#/patient/jiuyixuzhi">就医须知</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/patient/index.html#/patient/jianyanbaogaochaxun">检验报告查询</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>住院指南</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/patient/index.html?articleid=1405078140817088514/#/patient/zhuyuanzhinan">· 住院流程</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/patient/index.html?articleid=1414474606719373314/#/patient/zhuyuanzhinan">· 出院流程</a></p> 
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>就医须知</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/patient/index.html?articleid=1405370439014916097/#/patient/jiuyixuzhi">· 门诊就医指南</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/patient/index.html?articleid=1405404930718670850/#/patient/jiuyixuzhi">· 危重症和疑难复杂疾病目录</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/patient/index.html?articleid=1405074745762881538/#/patient/jiuyixuzhi">· 山西省中医院就诊须知</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/patient/index.html?articleid=1405372398807654402/#/patient/jiuyixuzhi">· 医保通道</a></p> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1403309911836815361')}"
+                            @click="gotoHref('http://localhost:8080/html/web/dangjiangongzuo/index.html')"
+                            @mouseover="onMenuMouseOver('1403309911836815361')"
+                            @mouseleave="onMenuMouseLeave">
+                            党建工作
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>党建工作</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/dangjiangongzuo/index.html#/dangjiangongzuo/yuanwugongkai">院务公开</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/dangjiangongzuo/index.html#/dangjiangongzuo/dangwugongkai">党务公开</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>院务公开</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/dangjiangongzuo/yuanwugongkai/1414524567507013634.html">· 签订目标责任书，促进平安和谐医院建设</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/dangjiangongzuo/yuanwugongkai/1414524226950500353.html">· 我院召开2010年主要工作任务督办工作会</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/dangjiangongzuo/yuanwugongkai/1414495435075194881.html">· 张建欣副省长深入我院调研</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/dangjiangongzuo/yuanwugongkai/1414493810143105026.html">· 我院中层干部绩效考核回顾</a></p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>党务公开</h5>
+                                            <div class="newLi" flag="tv">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/ReoAg16uRaMPtAbOONBHFQ" target="_blank">https://mp.weixin.qq.com/s/ReoAg16uRaMPtAbOONBHFQ</a><br/></p></div>
+                                                <a href="#">· 【我是党员，我在一线】热烈庆祝中国共产党成立100周年，山西省中医院与党同在</a>
+                                            </div>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/dangjiangongzuo/dangwugongkai/1415310838047252481.html">· 院工会召开新一届工会委员和小组长会议</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/dangjiangongzuo/dangwugongkai/1415309960858902530.html">· 我院组织学习十八大党课教育活动</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/dangjiangongzuo/dangwugongkai/1415302973215547393.html">· 我院党委荣获省直工委2010—2012创先争优活动先进基层党组织称号</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1400724656644583425')}"
+                            @click="gotoHref('http://localhost:8080/html/web/department/index.html')"
+                            @mouseover="onMenuMouseOver('1400724656644583425')"
+                            @mouseleave="onMenuMouseLeave">
+                            科室导航
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>科室导航</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/department/index.html#linchuangkeshi">临床科室</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/department/tesezhenliao/index.html#teseyiliao">特色医疗</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/department/index.html#yijikeshi">医技科室</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/department/mingyichuzhen/index.html">名医门诊</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/department/index.html#youshibingzhong">优势病种</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/department/tijianzhongxin/index.html">治未病健康体检中心</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>特色医疗</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/department/tesezhenliao/1406901793431072770.html">· 肿瘤科中医特色治疗</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/department/tesezhenliao/1406908512446033922.html">· 心病二科中医特色治疗</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/department/tesezhenliao/1406909123904253953.html">· 心病一科特色疗法</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/department/tesezhenliao/1406910049507454977.html">· 脾胃病科特色疗法</a></p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>优势病种</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/department/youshibingzhong/1406927579588440066.html">· 面瘫</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/department/youshibingzhong/1406927546516353026.html">· 心血管病</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/department/youshibingzhong/1406927508369158146.html">· 糖尿病</a></p>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/department/youshibingzhong/1406927476144320514.html">· 肝病</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1400725472675786754')}"
+                            @click="gotoHref('http://localhost:8080/html/web/expert/index.html')"
+                            @mouseover="onMenuMouseOver('1400725472675786754')"
+                            @mouseleave="onMenuMouseLeave">
+                            专家介绍
+                        </span>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1403327431889219586')}"
+                            @click="gotoHref('http://localhost:8080/html/web/yanjiushengjiaoyu/index.html')"
+                            @mouseover="onMenuMouseOver('1403327431889219586')"
+                            @mouseleave="onMenuMouseLeave">
+                            研究生教育
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>研究生教育</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html#/yanjiushengjiaoyu/xueweiyupeyang">学位与培养</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html#/yanjiushengjiaoyu/xueshenggongzuo">学生工作</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html#/yanjiushengjiaoyu/daoshigongzuo">导师工作</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html">招生与就业</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>学位与培养</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/yanjiushengjiaoyu/index.html?articleid=1407980508026089474/#/yanjiushengjiaoyu/xueweiyupeyang">· 我院研究生参加“全国中医药硕士研究生学术论坛”和“杏林青苗”论坛喜获佳绩</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/yanjiushengjiaoyu/index.html?articleid=1407983370051366914/#/yanjiushengjiaoyu/xueweiyupeyang">· 山西省中医药研究院2019届硕士研究生学位论文答辩会顺利举行</a></p> 
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>招生与就业</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html?articleid=1408000643998789634/#/yanjiushengjiaoyu/zhaoshengyujiuye">· 山西省四所新成立本科院校急需紧缺高层次人才专场招聘的通知</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html?articleid=1408000967283159042/#/yanjiushengjiaoyu/zhaoshengyujiuye">· 2021年硕士研究生招生录取名单（三）</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html?articleid=1408001323320848386/#/yanjiushengjiaoyu/zhaoshengyujiuye">· 2021年招收硕士研究生调剂考生复试名单(五）</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html?articleid=1408001692314742786/#/yanjiushengjiaoyu/zhaoshengyujiuye">· 2021年硕士研究生招生录取名单（二）</a></p> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1400727666594574337')}"
+                            @click="gotoHref('http://localhost:8080/html/web/chineseMedicine/index.html')"
+                            @mouseover="onMenuMouseOver('1400727666594574337')"
+                            @mouseleave="onMenuMouseLeave">
+                            中医特色
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>中医特色</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/chineseMedicine/tesezhenliaovideo/index.html">特色诊疗视频</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/chineseMedicine/displayBlock/index.html">陈列展示</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/chineseMedicine/jiankangshijian/index.html">健康时间</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>特色诊疗视频</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/chineseMedicine/tesezhenliaovideo/1409712652708593665.html">· 测试测试测试测试测试测试测试测试测试测试</a></p>
+                                            <div class="newLi" flag="tv">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://v.youku.com/v_show/id_XMTU4OTI0NzI0NA==.html?from=y1.7-2" target="_self">https://v.youku.com/v_show/id_XMTU4OTI0NzI0NA==.html?from=y1.7-2</a><br/></p></div>
+                                                <a href="#">· 穴位埋线</a>
+                                            </div>
+                                            <div class="newLi" flag="tv">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://v.youku.com/v_show/id_XMTU4MjYwMTk2NA==.html?from=y1.7-2" target="_self">https://v.youku.com/v_show/id_XMTU4MjYwMTk2NA==.html?from=y1.7-2</a><br/></p></div>
+                                                <a href="#">· 小儿推拿</a>
+                                            </div>
+                                            <div class="newLi" flag="tv">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://v.youku.com/v_show/id_XMTU4Mjc3MjM4MA==.html?from=y1.7-2" target="_self">https://v.youku.com/v_show/id_XMTU4Mjc3MjM4MA==.html?from=y1.7-2</a><br/></p></div>
+                                                <a href="#">· 耳穴埋豆</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>健康时间</h5>
+                                            <div class="newLi" flag="tv">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://v.qq.com/x/page/a3259zkro0m.html" target="_blank">https://v.qq.com/x/page/a3259zkro0m.html</a><br/></p></div>
+                                                <a href="#">· 面瘫有哪些症状 </a>
+                                            </div>
+                                            <div class="newLi" flag="tv">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://v.qq.com/x/page/t3256rs7md7.html" target="_blank">https://v.qq.com/x/page/t3256rs7md7.html</a><br/></p></div>
+                                                <a href="#">· 7、心绞痛经常发作怎么办</a>
+                                            </div>
+                                            <div class="newLi" flag="tv">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://v.qq.com/x/page/n3256gx390e.html" target="_blank">https://v.qq.com/x/page/n3256gx390e.html</a><br/></p></div>
+                                                <a href="#">· 6、治疗不稳定型心绞痛首选药</a>
+                                            </div>
+                                            <div class="newLi" flag="tv">
+                                                <div class="hiddenHref" style="display:none;visibility: hidden;"><p><a href="https://v.qq.com/x/page/j3256rrjofj.html" target="_blank">https://v.qq.com/x/page/j3256rrjofj.html</a><br/></p></div>
+                                                <a href="#">· 5、轻微心绞痛吃什么药</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <span :class="{active: activeMenu.includes('1405103281382989826')}"
+                            @click="gotoHref('http://localhost:8080/html/web/GCPzhongxin/index.html')"
+                            @mouseover="onMenuMouseOver('1405103281382989826')"
+                            @mouseleave="onMenuMouseLeave">
+                            GCP中心
+                        </span>
+                        <div class="content" style="display: none;">
+                            <div class="content_child spacing">
+                                <div class="row">
+                                    <div class="itemBox">
+                                        <div class="subject">
+                                            <h3>GCP中心</h3>
+                                        </div>
+                                        <div class="column columnBox hover alignment">
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/GCPzhongxin/index.html#/GCPzhongxin/zhuanyekeshi">专业科室</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/GCPzhongxin/index.html#/GCPzhongxin/GCP">GCP</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/GCPzhongxin/index.html#/GCPzhongxin/jigou">机构</a>
+                                            </p>
+                                            <p class="lis_p">
+                                                <a href="http://localhost:8080/html/web/GCPzhongxin/index.html#/GCPzhongxin/lunliweiyuanhui">伦理委员会</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>GCP</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/GCPzhongxin/index.html?articleid=1420002313637064706/#/GCPzhongxin/GCP">· 《药品注册管理办法》</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/GCPzhongxin/index.html?articleid=1419871643052900353/#/GCPzhongxin/GCP">· 《医疗器械临床试验质量管理规范》</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/GCPzhongxin/index.html?articleid=1419867070795972610/#/GCPzhongxin/GCP">· 《涉及人的生物医学研究伦理审查办法》</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/GCPzhongxin/index.html?articleid=1419850848075350017/#/GCPzhongxin/GCP">· 赫尔辛基宣言——涉及人体受试者的医学研究伦理原则</a></p> 
+                                        </div>
+                                    </div>
+                                    <div class="itemBox">
+                                        <div class="column columnBox column_flex"> 
+                                            <h5>伦理委员会</h5>
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/GCPzhongxin/index.html?articleid=1424444307662757889/#/GCPzhongxin/lunliweiyuanhui">· 伦理审查申请报告指南——科研项目研究病历模板</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/GCPzhongxin/index.html?articleid=1424435096744681473/#/GCPzhongxin/lunliweiyuanhui">· 伦理审查申请报告指南——科研项目临床研究方案模板</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/GCPzhongxin/index.html?articleid=1424432575275917313/#/GCPzhongxin/lunliweiyuanhui">· 伦理审查申请报告指南—— 复审申请</a></p> 
+                                            <p class="newLi" flag=""><a href="http://localhost:8080/html/web/GCPzhongxin/index.html?articleid=1412369981627236353/#/GCPzhongxin/lunliweiyuanhui">· 伦理审查申请报告指南——初始审查申请表</a></p> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="mobileHeader">
+        <div class="head_top">
+            <span class="btn active" @click="gotoHref('http://localhost:8080/html/web/home.html')">
+                大众版
+            </span>
+            <span class="btn" @click="gotoHref('http://localhost:8080/html/web/employee.html')">
+                员工版
+            </span>
+        </div>
+        <div class="mobileNav">
+            <div class="row">
+                <div class="logo" @click="gotoHref('http://localhost:8080/html/web/home.html')">
+
+                </div>
+                <div class="more" @click="handleNavOpen">
+                    <div v-if="!isNav">
+                        <p class="solid"></p>
+                        <p class="solid"></p>
+                        <p class="solid"></p>
+                    </div>
+                    <div class="close" v-if="isNav">
+
+                    </div>
+                </div>
+            </div>
+            <div class="nav_body_modal" :style="{height:height+'px'}" v-if="isNav">
+                <form id="searchDataForm1" action="http://localhost:8080/mcms/search.do" method="post"> 
+                    <div class="bd_search">
+                        <input type="text" class="inp" name="content_title" placeholder="请输入你要查询的内容">
+                        <span class="search_icon" onclick="document.getElementById('searchDataForm1').submit();"></span>
+                    </div>
+                </form>
+                <ul class="navUls" ref="navBody">
+                    <li class="menu">
+                        <div class="row" @click="gotoHref('http://localhost:8080/html/web/home.html')">
+                            首页
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/hospitalSurvey/index.html')">医院概况</span>
+                            <div class="iconClickBox" @click="handleIsShow('1')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/yuanneidaohang')">院内导航</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/jiaotongluxian')">交通路线</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/look')">院容院貌</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/custom')">医院文化</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/hospitalSurvey/info/index.html')">医院介绍</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/history')">历史沿革</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/fengyuanjieshao/shenglifenyuan/index.html')">分院介绍</span>
+                            <div class="iconClickBox" @click="handleIsShow('2')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/fengyuanjieshao/shenglifenyuan/index.html')">胜利分院</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/fengyuanjieshao/hepingfenyuan/index.html')">和平分院</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/journalism/index.html')">新闻中心</span>
+                            <div class="iconClickBox" @click="handleIsShow('3')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/journalism/index.html#/journalism/yiyuanxinwen')">医院新闻</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/journalism/index.html#/journalism/meitibaodao')">媒体报道</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/infoOpen/index.html')">通知公告</span>
+                            <div class="iconClickBox" @click="handleIsShow('4')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/yixun')">医讯公告</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/zhaopinxinxi')">招聘信息</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/zhaobiaogonggao')">招标公告</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/chuzhendongtai/index.html')">出诊动态</span>
+                            <div class="iconClickBox" @click="handleIsShow('5')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/chuzhendongtai/index.html#/chuzhendongtai/guahaoxuzhi')">挂号须知</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/chuzhendongtai/index.html#/chuzhendongtai/chuzhenchawen')">出诊查询</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/chuzhendongtai/index.html#/chuzhendongtai/jiaqichuzhen')">假期出诊</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/chuzhendongtai/index.html')">出诊信息</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/chuzhendongtai/index.html#/chuzhendongtai/tingzhenxinxi')">停诊信息</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/webhttp://xy.reallycare.cn/sxszyyN/index.html')">预约挂号</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/patient/index.html')">患者服务</span>
+                            <div class="iconClickBox" @click="handleIsShow('6')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/patient/index.html#/patient/zhuyuanzhinan')">住院指南</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/patient/index.html#/patient/yibaozhinan')">医保指南</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/patient/index.html#/patient/jiuyixuzhi')">就医须知</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/patient/index.html#/patient/jianyanbaogaochaxun')">检验报告查询</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/dangjiangongzuo/index.html')">党建工作</span>
+                            <div class="iconClickBox" @click="handleIsShow('7')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/dangjiangongzuo/index.html#/dangjiangongzuo/yuanwugongkai')">院务公开</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/dangjiangongzuo/index.html#/dangjiangongzuo/dangwugongkai')">党务公开</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/department/index.html')">科室导航</span>
+                            <div class="iconClickBox" @click="handleIsShow('8')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/department/index.html#linchuangkeshi')">临床科室</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/department/tesezhenliao/index.html#teseyiliao')">特色医疗</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/department/index.html#yijikeshi')">医技科室</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/department/mingyichuzhen/index.html')">名医门诊</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/department/index.html#youshibingzhong')">优势病种</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/department/tijianzhongxin/index.html')">治未病健康体检中心</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/expert/index.html')">专家介绍</span>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/yanjiushengjiaoyu/index.html')">研究生教育</span>
+                            <div class="iconClickBox" @click="handleIsShow('10')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html#/yanjiushengjiaoyu/xueweiyupeyang')">学位与培养</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html#/yanjiushengjiaoyu/xueshenggongzuo')">学生工作</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html#/yanjiushengjiaoyu/daoshigongzuo')">导师工作</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/yanjiushengjiaoyu/zhaoshengyujiuye/index.html')">招生与就业</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/chineseMedicine/index.html')">中医特色</span>
+                            <div class="iconClickBox" @click="handleIsShow('11')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/chineseMedicine/tesezhenliaovideo/index.html')">特色诊疗视频</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/chineseMedicine/displayBlock/index.html')">陈列展示</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/chineseMedicine/jiankangshijian/index.html')">健康时间</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="menu">
+                        <div class="row">
+                            <span class="spanLabel" @click="gotoHref('http://localhost:8080/html/web/GCPzhongxin/index.html')">GCP中心</span>
+                            <div class="iconClickBox" @click="handleIsShow('12')">
+                                <span class="right_icon"></span>
+                            </div>
+                        </div>
+                        <div class="showBox">
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/GCPzhongxin/index.html#/GCPzhongxin/zhuanyekeshi')">专业科室</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/GCPzhongxin/index.html#/GCPzhongxin/GCP')">GCP</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/GCPzhongxin/index.html#/GCPzhongxin/jigou')">机构</span>
+                            </div>
+                            <div class="cel">
+                                <span @click="gotoHref('http://localhost:8080/html/web/GCPzhongxin/index.html#/GCPzhongxin/lunliweiyuanhui')">伦理委员会</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="rightNav">
+    <div class="box">
+      <div class="icon_img">
+        <img src="http://localhost:8080/template/1/new_hospital/images/r_icon7.jpg" />
+      </div>
+      <div class="w_text">
+        <p>预约</p>
+        <p>挂号</p>
+      </div>
+    </div>
+    <div class="box" @click="goto('http://localhost:8080/html/web/chuzhendongtai/index.html')">
+      <div class="icon_img">
+        <img src="http://localhost:8080/template/1/new_hospital/images/r_icon6.jpg" />
+      </div>
+      <div class="w_text">
+        <p>出诊</p>
+        <p>信息</p>
+      </div>
+    </div>
+    <div class="box" @click="goto('http://localhost:8080/html/web/department/index.html')">
+      <div class="icon_img">
+        <img src="http://localhost:8080/template/1/new_hospital/images/r_icon5.jpg" />
+      </div>
+      <div class="w_text">
+        <p>科室</p>
+        <p>导航</p>
+      </div>
+    </div>
+    <!-- 
+    <div class="box" @click="goto('http://localhost:8080/html/web/yuanchengyiliao/index.html')">
+      <div class="icon_img">
+        <img src="http://localhost:8080/template/1/new_hospital/images/r_icon8.jpg" />
+      </div>
+      <div class="w_text">
+        <p>远程</p>
+        <p>医疗</p>
+      </div>
+    </div>
+     -->
+    <div class="box" @click="goto('http://localhost:8080/html/web/patient/index.html#/patient/jianyanbaogaochaxun')">
+      <div class="icon_img">
+        <img src="http://localhost:8080/template/1/new_hospital/images/r_icon9.jpg" />
+      </div>
+      <div class="w_text">
+        <p>报告</p>
+        <p>检查</p>
+      </div>
+    </div>
+    <div class="box">
+      <div class="icon_img">
+        <img src="http://localhost:8080/template/1/new_hospital/images/r_icon2.jpg" />
+      </div>
+      <div class="w_text">
+        <p>微信</p>
+      </div>
+      <div class="qrCode maxCode">
+        <i></i>
+        <img class="imgs" src="http://localhost:8080/template/1/new_hospital/images/qrcode.jpg" alt="">
+      </div>
+    </div>
+    <div class="box">
+      <div class="icon_img" style="padding-top:4px;">
+        <img src="http://localhost:8080/template/1/new_hospital/images/r_icon10.png" />
+      </div>
+      <div class="w_text">
+        <p>头条</p>
+      </div>
+      <div class="qrCode">
+        <i></i>
+        <img class="imgs" src="http://localhost:8080/template/1/new_hospital/images/qrcode_m.toutiao.cn.jpg" alt="">
+      </div>
+    </div>
+  </div>
+  <div class="scrollTop" v-if="isTop" @click="toTop">
+    <img src="http://localhost:8080/template/1/new_hospital/images/arr_up.png" alt="">
+  </div>
+  
+        <div class="banner">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <a href="http://t-think.com/hospital/hospitalSurvey/index.html#/hospitalSurvey/look" target="_blank">
+                            <img src="http://localhost:8080/upload/1/cms/content/1627042561643.jpg" alt="">
+                        </a>
+                    </div>
+                    <div class="swiper-slide">
+                        <a href="https://v.qq.com/x/page/o0568iylvnf.html" target="_blank">
+                            <img src="http://localhost:8080/upload/1/cms/content/1627040641888.jpg" alt="">
+                        </a>
+                    </div>
+                    <div class="swiper-slide">
+                        <a href="https://v.qq.com/x/page/k0568xqoq2a.html" target="_blank">
+                            <img src="http://localhost:8080/upload/1/cms/content/1627040552253.jpg" alt="">
+                        </a>
+                    </div>
+                    <div class="swiper-slide">
+                        <a href="http://t-think.com/hospital/hospitalSurvey/index.html#/hospitalSurvey/custom" target="_blank">
+                            <img src="http://localhost:8080/upload/1/cms/content/1627040403819.jpg" alt="">
+                        </a>
+                    </div>
+                    <!-- <div class="swiper-slide">
+                        <a href="https://v.qq.com/x/page/k0568xqoq2a.html" target="_blank">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/banner2.jpg" alt="">
+                        </a>
+                    </div>
+                    <div class="swiper-slide">
+                        <a href="https://v.qq.com/x/page/o0568iylvnf.html" target="_blank">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/banner3.jpg" alt="">
+                        </a>
+                    </div>
+                    <div class="swiper-slide">
+                        <a href="#">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/banner4.jpg" alt="">
+                        </a>
+                    </div> -->
+                </div>
+                <!-- 如果需要分页器 -->
+                <div class="swiper-pagination"></div>
+                
+                <!-- 如果需要导航按钮 -->
+                <div class="swiper-button" style="position: relative;width: 1230px;margin: 0 auto;">
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
+                </div>
+            </div>
+        </div>
+        <div class="center">
+            <div class="module spacing">
+                <div class="box" @click="goto('http://localhost:8080/html/web/chuzhendongtai/index.html#/chuzhendongtai/chuzhenxinxi')">
+                    <div class="box_child">
+                        <div class="imgs">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/icon_1.png" alt="">
+                        </div>
+                        <p class="text">预约挂号</p>
+                    </div>
+                </div>
+                <div class="box" @click="goto('http://localhost:8080/html/web/patient/index.html#/patient/jiuyixuzhi')">
+                    <div class="box_child">
+                        <div class="imgs">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/icon_2.png" alt="">
+                        </div>
+                        <p class="text">就医须知</p>
+                    </div>
+                </div>
+                <div class="box" @click="goto('http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/jiaotongluxian')">
+                    <div class="box_child">
+                        <div class="imgs">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/icon_3.png" alt="">
+                        </div>
+                        <p class="text">医院位置</p>
+                    </div>
+                </div>
+                <div class="box" @click="goto('http://localhost:8080/html/web/department/index.html?id=d_ksdh&childId=tszl')">
+                    <div class="box_child">
+                        <div class="imgs">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/icon.png" alt="">
+                        </div>
+                        <p class="text">专科专病</p>
+                    </div>
+                </div>
+            </div>
+            <div class="News spacing">
+                <div class="left_box">
+                    <div class="row">
+                        <div class="l_name">
+                            新闻中心
+                        </div>
+                        <div class="list_text" id="newsOne">
+                            <p class="back active"  @click="isMobile && goto('http://localhost:8080/html/web/journalism/index.html#/journalism/yiyuanxinwen')">医院新闻</p>
+                            <p class="back"  @click="isMobile && goto('http://localhost:8080/html/web/journalism/index.html#/journalism/meitibaodao')">媒体报道</p>
+                        </div>
+                    </div>
+                    <div class="cont active">
+                        <div class="banner_wrap">
+                            <div class="swiper-container-child  swiper-no-swiping">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide" flag="c,hot" @click="goto('http://localhost:8080/html/web/journalism/yiyuanxinwen/1422490515815911426.html')">
+                                        <div class="bannerChild">
+                                            <img style="width:100%;height:100%;" src="http://localhost:8080/upload/1/cms/content/1628046002839.jpg" alt="">
+                                        </div>
+                                        <div class="r_desc">
+                                            <p class="title">
+                                                山西省中医院动员部署“打击收受红包加强行风建设”专项行动
+                                            </p>
+                                            <p class="time">2021-07-27</p>
+                                            <p class="desc">
+                                                7月26日下午，山西省中医院召开“打击收受红包，加强行风建设”专项行动动员部署会议，医院党委领导班子成员以及全体中层干部参加。会议由院长刘光珍主持。会上，山西省中医院纪委书记郭瑞对“打击收受红包，加强行风建设”专项行动进行了详细全面的安排部署。他表示，医院将以严禁收受红包，严厉打击收受回扣，纠正诊疗服务乱象，改善医疗服务态度以及优化完善医疗环境为重点，全面开展专项行动。全院职工要深刻认识行风建设的重要意义，要认真执行医院各项核心制度，规范医疗程序，依法执业。
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" flag="c,hot" @click="goto('http://localhost:8080/html/web/journalism/yiyuanxinwen/1422495552629755906.html')">
+                                        <div class="bannerChild">
+                                            <img style="width:100%;height:100%;" src="http://localhost:8080/upload/1/cms/content/1628046240150.jpg" alt="">
+                                        </div>
+                                        <div class="r_desc">
+                                            <p class="title">
+                                                省中医院 古籍保护，我们在行动
+                                            </p>
+                                            <p class="time">2021-07-27</p>
+                                            <p class="desc">
+                                                7月23日，由中国古籍保护协会主办，山西省图书馆（山西省古籍保护中心）承办的“2021年中华古籍普查文化志愿服务行动 · 山西行”活动来到了山西省中医院。省中医院作为我省中医药最高研究机构，有着相对丰富的馆藏中医药古籍，省图书馆党委书记冀保胜感谢省中医院加入本次志愿活动，他认为，作为医疗机构加入开展古籍普查工作，一定会成为我省古籍保护工作的一大亮点。
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" flag="c,hot" @click="goto('http://localhost:8080/html/web/journalism/yiyuanxinwen/1422139595693346817.html')">
+                                        <div class="bannerChild">
+                                            <img style="width:100%;height:100%;" src="http://localhost:8080/upload/1/cms/content/1628046421341.jpg" alt="">
+                                        </div>
+                                        <div class="r_desc">
+                                            <p class="title">
+                                                程永平副市长一行莅临山西省中医院调研医疗废物无害化管理工作
+                                            </p>
+                                            <p class="time">2021-06-21</p>
+                                            <p class="desc">
+                                                2021年6月18日，太原市副市长程永平、市政府副秘书长杨兴海、市生态环境局局长闫文斌一行莅临山西省中医院，实地调研我市医疗废物收集、贮存、转移及医疗废水处理有关情况。
+在山西省中医院谭利国书记、李庭凯副院长、李辉副书记陪同下，程永平一行先后前往我院医疗废物贮存站、污水处理站进行了实地调研。谭利国书记就我院长态化疫情防控和污水处理、医疗废弃物管理等工作做了详细介绍。
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" flag="c,hot" @click="goto('http://localhost:8080/html/web/journalism/yiyuanxinwen/1402973638051852290.html')">
+                                        <div class="bannerChild">
+                                            <img style="width:100%;height:100%;" src="http://localhost:8080/upload/1/cms/content/1628047614945.jpg" alt="">
+                                        </div>
+                                        <div class="r_desc">
+                                            <p class="title">
+                                                山西省中医院党委召开巡视工作部署会
+                                            </p>
+                                            <p class="time">2021-02-25</p>
+                                            <p class="desc">
+                                                2月24日上午，山西省中医院召开党委扩大会议，对巡视工作进行了专题部署。院领导班子全体成员及党委办、院办、人事科、纪检监察室、宣传部等相关职能部门负责人参加了本次会议。
+党委书记谭利国主持会议，传达了中共山西省委巡视工作办公室下发的《关于省委巡视组对省中医药研究所党委开展专项巡视的通知》，对通知要求的思想准备、组织准备、会议准备、工作汇报、宣传准备、材料准备、保障准备七个方面进行了详细解读。会上，谭利国书记宣布了联络组组长及成员名单，并对联络接洽、材料准备、会议安排、保障工作、宣传工作等具体事项进行了安排部署。
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <!-- 如果需要分页器 -->
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        </div>
+                        <div class="row_wrap" flag="c,hot" @click="goto('http://localhost:8080/html/web/journalism/yiyuanxinwen/1422490515815911426.html')">
+                            <div class="block">
+                                <p class="weight">27</p>
+                                <p class="time">2021-07</p>
+                            </div>
+                            <div class="desc">山西省中医院动员部署“打击收受红包加强行风建设”专项行动</div>
+                        </div>
+                        <div class="row_wrap" flag="c,hot" @click="goto('http://localhost:8080/html/web/journalism/yiyuanxinwen/1422495552629755906.html')">
+                            <div class="block">
+                                <p class="weight">27</p>
+                                <p class="time">2021-07</p>
+                            </div>
+                            <div class="desc">省中医院 古籍保护，我们在行动</div>
+                        </div>
+                        <div class="row_wrap" flag="c,hot" @click="goto('http://localhost:8080/html/web/journalism/yiyuanxinwen/1422139595693346817.html')">
+                            <div class="block">
+                                <p class="weight">21</p>
+                                <p class="time">2021-06</p>
+                            </div>
+                            <div class="desc">程永平副市长一行莅临山西省中医院调研医疗废物无害化管理工作</div>
+                        </div>
+                        <div class="row_wrap" flag="c,hot" @click="goto('http://localhost:8080/html/web/journalism/yiyuanxinwen/1402973638051852290.html')">
+                            <div class="block">
+                                <p class="weight">25</p>
+                                <p class="time">2021-02</p>
+                            </div>
+                            <div class="desc">山西省中医院党委召开巡视工作部署会</div>
+                        </div>
+                    </div>
+                    <div class="browseMore active"  @click="goto('http://localhost:8080/html/web/journalism/index.html#/journalism/yiyuanxinwen')">
+                        浏览更多医院新闻&nbsp;&nbsp;+
+                    </div>
+                    <div class="cont">
+                        <div class="banner_wrap">
+                            <div class="swiper-container-child  swiper-no-swiping">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide" flag="c,tv,hot">
+                                        <div class="hidden" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/rUNgAka00AY5VXGyWVwvsQ" target="_blank">https://mp.weixin.qq.com/s/rUNgAka00AY5VXGyWVwvsQ</a><br/></p></div>
+                                        <div class="bannerChild">
+                                            <img style="width:100%;height:100%;" src="http://localhost:8080/upload/1/cms/content/1628062047098.jpeg" alt="">
+                                        </div>
+                                        <div class="r_desc">
+                                            <p class="title">
+                                                山西省中医院：“医疗+服务”新模式来了！“方便看中医”在行动！
+                                            </p>
+                                            <p class="time">2021-04-30</p>
+                                            <p class="desc">
+                                                为了更大限度为患者提供优质就医环境和便利就医条件，山西省中医院的门诊部最近开设了导诊护士和“一站式服务”，为患者提供了很大的帮助。在过去传统的医疗模式中，来医院就医环节比较多，挂号、问诊、开药、缴费每个环节都需要排队。现如今，随着智能化平台的启用，“一站式服务”既缩短了在医院排队的时间，更提升了患者的就医感。
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" flag="tv,c,hot">
+                                        <div class="hidden" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/o4rWZeYi6VJ4zkB1Gleinw" target="_blank">https://mp.weixin.qq.com/s/o4rWZeYi6VJ4zkB1Gleinw</a><br/></p></div>
+                                        <div class="bannerChild">
+                                            <img style="width:100%;height:100%;" src="http://localhost:8080/upload/1/cms/content/1628055871564.jpg" alt="">
+                                        </div>
+                                        <div class="r_desc">
+                                            <p class="title">
+                                                山西省中医院肿瘤防治宣传周公益活动来了！癌症防治，让我们共同行动
+                                            </p>
+                                            <p class="time">2021-04-14</p>
+                                            <p class="desc">
+                                                2021年4月15日-21日是第27届“全国肿瘤防治宣传周”，今年主题是“健康中国健康家--关爱生命·科学防癌”。山西省中医院开展了门诊义诊、八段锦锻炼、多层次科普讲座等活动，通过微信公众号、官网服务号等方式，联合山西省红十字协会、中国南丁格尔志愿护理服务山西省中医院支队，将科学、准确、有效的防癌抗癌科普知识传递给大众。
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" flag="c,tv,hot">
+                                        <div class="hidden" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/Lkmp170dLLMmG8OOGz5m2w" target="_blank">https://mp.weixin.qq.com/s/Lkmp170dLLMmG8OOGz5m2w</a><br/></p></div>
+                                        <div class="bannerChild">
+                                            <img style="width:100%;height:100%;" src="http://localhost:8080/upload/1/cms/content/1624350737185.jpg" alt="">
+                                        </div>
+                                        <div class="r_desc">
+                                            <p class="title">
+                                                山西省中医院核酸检测线上预约流程操作说明
+                                            </p>
+                                            <p class="time">2021-01-22</p>
+                                            <p class="desc">
+                                                由于我院于2021年1月16日上线“线上核酸检测预约”服务，为使用户更直观的掌握该功能的使用方法，现将我院新冠核酸检测线上预约流程操作说明如下：一、微信关注“山西省中医院服务号”——点击下方“就医助手”——点击“核酸检测”——填写就诊人信息及预约检测时间——缴费——保存核销码——持核销码至采样点采集。检测结果可在服务号首页“查看报告”中查询。
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" flag="c,tv,hot">
+                                        <div class="hidden" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/oJIyIqEGf_qU6hvoftuCyA" target="_blank">https://mp.weixin.qq.com/s/oJIyIqEGf_qU6hvoftuCyA</a><br/></p></div>
+                                        <div class="bannerChild">
+                                            <img style="width:100%;height:100%;" src="http://localhost:8080/upload/1/cms/content/1624350243671.jpg" alt="">
+                                        </div>
+                                        <div class="r_desc">
+                                            <p class="title">
+                                                打好疫情防控阻击战，山西省中医院一直在行动
+                                            </p>
+                                            <p class="time">2021-01-22</p>
+                                            <p class="desc">
+                                                2020年，注定不寻常。突如其来的新冠肺炎，让国内外疫情肆虐，这场没有硝烟的新冠“战疫”是场持久战，我们和病毒的较量，既是速度的较量，也是耐力的较量。2020年，面对危机，山西省中医院全体医护人员，坚守初心，勇挑重担，充分发挥中医药、中西结合并重优势，始终坚守在抗击疫情的最前线，积极参与疫病预防和重症、危重症患者的救治，并获得了全省记大功奖励和全国抗击新冠肺炎疫情先进集体等荣誉。
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <!-- 如果需要分页器 -->
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        </div>
+                        <div class="row_wrap" flag="c,tv,hot">
+                            <div class="hidden" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/rUNgAka00AY5VXGyWVwvsQ" target="_blank">https://mp.weixin.qq.com/s/rUNgAka00AY5VXGyWVwvsQ</a><br/></p></div>
+                            <div class="block">
+                                <p class="weight">30</p>
+                                <p class="time">2021-04</p>
+                            </div>
+                            <div class="desc">山西省中医院：“医疗+服务”新模式来了！“方便看中医”在行动！</div>
+                        </div>
+                        <div class="row_wrap" flag="tv,c,hot">
+                            <div class="hidden" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/o4rWZeYi6VJ4zkB1Gleinw" target="_blank">https://mp.weixin.qq.com/s/o4rWZeYi6VJ4zkB1Gleinw</a><br/></p></div>
+                            <div class="block">
+                                <p class="weight">14</p>
+                                <p class="time">2021-04</p>
+                            </div>
+                            <div class="desc">山西省中医院肿瘤防治宣传周公益活动来了！癌症防治，让我们共同行动</div>
+                        </div>
+                        <div class="row_wrap" flag="c,tv,hot">
+                            <div class="hidden" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/Lkmp170dLLMmG8OOGz5m2w" target="_blank">https://mp.weixin.qq.com/s/Lkmp170dLLMmG8OOGz5m2w</a><br/></p></div>
+                            <div class="block">
+                                <p class="weight">22</p>
+                                <p class="time">2021-01</p>
+                            </div>
+                            <div class="desc">山西省中医院核酸检测线上预约流程操作说明</div>
+                        </div>
+                        <div class="row_wrap" flag="c,tv,hot">
+                            <div class="hidden" style="display:none;visibility: hidden;"><p><a href="https://mp.weixin.qq.com/s/oJIyIqEGf_qU6hvoftuCyA" target="_blank">https://mp.weixin.qq.com/s/oJIyIqEGf_qU6hvoftuCyA</a><br/></p></div>
+                            <div class="block">
+                                <p class="weight">22</p>
+                                <p class="time">2021-01</p>
+                            </div>
+                            <div class="desc">打好疫情防控阻击战，山西省中医院一直在行动</div>
+                        </div>
+                    </div>
+                    <div class="browseMore"  @click="goto('http://localhost:8080/html/web/journalism/index.html#/journalism/meitibaodao')">
+                        浏览更多医院新闻&nbsp;&nbsp;+
+                    </div>
+                    
+                </div>
+                <div class="right_box">
+                    <div class="row">
+                        <div class="l_name">
+                            通知公告
+                        </div> 
+                        <div class="list_text" id="newsTwo">
+                            <p class="back active zhaobiaogonggao"  @click="isMobile && goto('http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/zhaobiaogonggao')">招标公告</p>
+                            <p class="back zhaopinxinxi"  @click="isMobile && goto('http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/zhaopinxinxi')">招聘信息</p>
+                            <p class="back yixun"  @click="isMobile && goto('http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/yixun')">医讯公告</p>
+                        </div>
+                    </div>
+                    <div class="cont active" idx=>
+                        <div class="box"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html?articleid=1405084115921903618/#/infoOpen/zhaobiaogonggao')">
+                            <h3 class="time">01-13</h3>
+                            <p class="text">
+                                山西省中医院电梯维保谈判公告
+                            </p>
+                        </div>
+                        <div class="box"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html?articleid=1406955658486591489/#/infoOpen/zhaobiaogonggao')">
+                            <h3 class="time">11-20</h3>
+                            <p class="text">
+                                山西省中医院不间断电源（CPU）项目中标公告
+                            </p>
+                        </div>
+                        <div class="box"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html?articleid=1406956443882598401/#/infoOpen/zhaobiaogonggao')">
+                            <h3 class="time">11-09</h3>
+                            <p class="text">
+                                山西省中医院不间断电源（CPU）项目招标公告
+                            </p>
+                        </div>
+                        <div class="box"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html?articleid=1406960698005762049/#/infoOpen/zhaobiaogonggao')">
+                            <h3 class="time">10-09</h3>
+                            <p class="text">
+                                山西省中医院户外亮化照明工程废标公告
+                            </p>
+                        </div>
+                        
+                    </div>
+                    <div class="browseMore active"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/zhaobiaogonggao')">
+                        浏览更多招标公告&nbsp;&nbsp;+
+                    </div>
+                    <div class="cont" idx=>
+                        <div class="box"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html?articleid=1428173177243160577/#/infoOpen/zhaopinxinxi')">
+                            <h3 class="time">08-18</h3>
+                            <p class="text">
+                                关于2021年公开招聘合同制人员体检的通知
+                            </p>
+                        </div>
+                        <div class="box"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html?articleid=1427865800069468162/#/infoOpen/zhaopinxinxi')">
+                            <h3 class="time">08-15</h3>
+                            <p class="text">
+                                2021年公开招聘合同制人员综合成绩公示
+                            </p>
+                        </div>
+                        <div class="box"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html?articleid=1427867742627811330/#/infoOpen/zhaopinxinxi')">
+                            <h3 class="time">08-13</h3>
+                            <p class="text">
+                                2021年公开招聘合同制护理助产人员公告
+                            </p>
+                        </div>
+                        <div class="box"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html?articleid=1427869245828616193/#/infoOpen/zhaopinxinxi')">
+                            <h3 class="time">08-09</h3>
+                            <p class="text">
+                                2021年公开招聘合同制人员面试通知
+                            </p>
+                        </div>
+                        
+                    </div>
+                    <div class="browseMore"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/zhaopinxinxi')">
+                        浏览更多招标公告&nbsp;&nbsp;+
+                    </div>
+                    <div class="cont" idx=>
+                        <div class="box"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html?articleid=1405349466194681858/#/infoOpen/yixun')">
+                            <h3 class="time">04-07</h3>
+                            <p class="text">
+                                山西省中医院第三届微电影剧本征集大赛启动啦！
+                            </p>
+                        </div>
+                        <div class="box"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html?articleid=1405128714954579970/#/infoOpen/yixun')">
+                            <h3 class="time">03-16</h3>
+                            <p class="text">
+                                山西省中医院环境信息公开表
+                            </p>
+                        </div>
+                        
+                    </div>
+                    <div class="browseMore"  @click="goto('http://localhost:8080/html/web/infoOpen/index.html#/infoOpen/yixun')">
+                        浏览更多招标公告&nbsp;&nbsp;+
+                    </div>
+                </div>
+            </div>
+            <div class="department spacing">
+                <div class="row_title">
+                    <div class="imgs">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/01.png" alt="">
+                    </div>
+                    <p class="name">科室导航</p>
+                    <div class="imgs">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/02.png" alt="">
+                    </div>
+                </div>
+                <div class="cont">
+                    <div class="img_wrap active" @click="goto(selectedDepart.typelink)">
+                        <img :src="selectedDepart.image" alt="">
+                        <div class="mantle">
+                            <div class="text_cont">
+                                <p class="title">
+                                    {{ selectedDepart.typetitle }}
+                                </p>
+                                <p class="desc">
+                                    {{ selectedDepart.descrip }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="departList">
+                        <div class="tabs" id="depart">
+                            <p class="tab" :class="{active: idx==0}" v-for="(depart, idx) in departments">{{depart.typetitle}}</p>
+                            <div class="d_right">
+                                <div class="solid"></div>
+                                <div class="more" @click="goto('http://localhost:8080/html/web/department/index.html')">
+                                    查看更多
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ulsWrap" :class="{active: idx==0}" v-for="(depart, idx) in departments">
+                            <ul class="uls" :class="{active: idx==0}">
+                                <li class="lis" :class="{active: idx2==num}" @click="goto(dep.typelink)" v-for="(dep, idx2) in depart.children" @mouseover="setDepartment(dep,idx2)">
+                                    <span>
+                                        {{dep.typetitle}}
+                                    </span>
+                                </li>
+                                <li class="lis_fack_item"></li>
+                                <li class="lis_fack_item"></li>
+                                <li class="lis_fack_item"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="imgList">
+                    <div class="box back_1" @click="goto('http://localhost:8080/html/web/department/tijianzhongxin/index.html')">“治未病”健康体检中心</div>
+                    <div class="box back_2" @click="goto('http://localhost:8080/html/web/department/mingyichuzhen/index.html')">名医门诊</div>
+                    <div class="box back_3" @click="goto('http://localhost:8080/html/web/fengyuanjieshao/shenglifenyuan/index.html')">胜利分院</div>
+                    <div class="box back_4" @click="goto('http://localhost:8080/html/web/fengyuanjieshao/hepingfenyuan/index.html')">和平分院</div>
+                </div>
+            </div>
+            <div class="department introduce spacing">
+                <div class="row_title">
+                    <div class="imgs">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/01.png" alt="">
+                    </div>
+                    <p class="name">专家介绍</p>
+                    <div class="imgs">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/02.png" alt="">
+                    </div>
+                </div>
+                <!-- 专家介绍 -->
+                <Expert></Expert>
+                <!--
+                <div class="swiper-container1">
+                    <div class="swiper-wrapper headPhoto">
+                        <div class="swiper-slide ">
+                            <div class="box">
+                                <div class="block">
+                                    <div class="hover">
+                                        <div class="box_child">
+                                            <div class="pad">
+                                                <div class="img">
+                                                    <img src="http://localhost:8080/template/1/new_hospital/images/avatar1_1.png" alt="">
+                                                </div>
+                                                <p class="name">王晞星</p>
+                                                <p class="position">肿瘤病专家</p>
+                                            </div>
+                                        </div>
+                                        <div class="box_active_wrap">
+                                            <div class="box_active">
+                                                <div class="descWrap">
+                                                    <p class="text">
+                                                        王晞星，主任医师，教授，博/硕士研究生导师，国贴专家，山西名医，全国中医药专家学术经验继承导师，山西省中医院院长，重点专科带头人。
+                                                    </p>
+                                                    <p class="title">擅长：</p>
+                                                    <p class="text">
+                                                        中西医结合治疗肺癌、胃癌、食管癌、结直肠癌、肾癌等；对消化道疾病有独到的治疗方法
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="back_bord">
+                                        <div class="back">
+                                            内综肿瘤科
+                                        </div>
+                                    </div>
+                                    <div class="back_row">
+                                        <div class="cel_o">挂号</div>
+                                        <div class="cel_t">问诊</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                -->
+                <ul class="ul_wrap">
+                    <li>
+                        <div class="box">
+                            <p class="name">网上商城</p>
+                            <p class="more ">查看更多</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="box">
+                            <p class="name">网上书城</p>
+                            <p class="more">查看更多</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="box">
+                            <p class="name">健康科普</p>
+                            <p class="more" @click="goto('http://localhost:8080/html/web/chineseMedicine/jiankangshijian/index.html')">查看更多</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="box">
+                            <p class="name">中医特色</p>
+                            <p class="more" @click="goto('http://localhost:8080/html/web/chineseMedicine/index.html')">查看更多</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+<div class="bottomBack">
+    <div class="top"></div>
+    <div class="cont contPC">
+        <div class="minW">
+            <div class="box_wrap">
+                                <div class="item" @click="goto('http://localhost:8080/html/web/chuzhendongtai/index.html')">
+                    <p class="imgs">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/i.png" alt="">
+                    </p>
+                    <p class="name">出诊信息</p>
+                </div>
+                <div class="item" @click="goto('http://localhost:8080/html/web/patient/index.html#/patient/jiuyixuzhi')">
+                    <p class="imgs">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/icon_2.png" alt="">
+                    </p>
+                    <p class="name">就医须知</p>
+                </div>
+                <div class="item" @click="goto('http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/jiaotongluxian')">
+                    <p class="imgs">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/icon_3.png" alt="">
+                    </p>
+                    <p class="name">医院位置</p>
+                </div>
+                <div class="item" @click="goto('http://localhost:8080/html/web/department/index.html')">
+                    <p class="imgs">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/icon.png" alt="">
+                    </p>
+                    <p class="name">专科专病</p>
+                </div>
+                <div class="item" @click="goto('http://localhost:8080/html/web/department/tijianzhongxin/index.html')">
+                    <p class="imgs">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/icon_5.png" alt="">
+                    </p>
+                    <p class="name">健康体检</p>
+                </div>
+                <div class="item" @click="goto('http://localhost:8080/html/web/chineseMedicine/jiankangshijian/index.html')">
+                    <p class="imgs">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/icon_6.png" alt="">
+                    </p>
+                    <p class="name">健康科普</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cont contMobile">
+        <div class="minW">
+            <div class="box_wrap">
+                <div class="itemMobile">
+                    <div class="item" @click="goto('http://localhost:8080/html/web/chuzhendongtai/index.html')">
+                        <p class="imgs">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/i.png" alt="">
+                        </p>
+                        <p class="name">出诊信息</p>
+                    </div>
+                    <div class="item" @click="goto('http://localhost:8080/html/web/patient/index.html#/patient/jiuyixuzhi')">
+                        <p class="imgs">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/icon_2.png" alt="">
+                        </p>
+                        <p class="name">就医须知</p>
+                    </div>
+                    <div class="item" @click="goto('http://localhost:8080/html/web/hospitalSurvey/index.html#/hospitalSurvey/jiaotongluxian')">
+                        <p class="imgs">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/icon_3.png" alt="">
+                        </p>
+                        <p class="name">医院位置</p>
+                    </div>
+                </div>
+                <div class="itemMobile">
+                    <div class="item" @click="goto('http://localhost:8080/html/web/department/index.html')">
+                        <p class="imgs">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/icon.png" alt="">
+                        </p>
+                        <p class="name">专科专病</p>
+                    </div>
+                    <div class="item" @click="goto('http://localhost:8080/html/web/department/tijianzhongxin/index.html')">
+                        <p class="imgs">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/icon_5.png" alt="">
+                        </p>
+                        <p class="name">健康体检</p>
+                    </div>
+                    <div class="item" @click="goto('http://localhost:8080/html/web/chineseMedicine/jiankangshijian/index.html')">
+                        <p class="imgs">
+                            <img src="http://localhost:8080/template/1/new_hospital/images/icon_6.png" alt="">
+                        </p>
+                        <p class="name">健康科普</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="top"></div>
+</div>
+<div class="footer">
+    <div class="top">
+        <div class="box">
+            <a class="black" href="http://www.satcm.gov.cn/" target="_blank">中医药管理局</a>
+            <span class="solid">
+                |
+            </span>
+            <a class="black" href="http://www.nhc.gov.cn/" target="_blank">中华人民共和国国家卫生健康委员会</a>
+            <span class="solid">
+                |
+            </span>
+            <a class="black" href="http://wjw.shanxi.gov.cn/" target="_blank">山西省卫生健康委员会</a>
+            <span class="solid">
+                |
+            </span>
+            <a class="black" href="http://sxzyy.dayi100.com/" target="_blank">山西省中医院图书馆</a>
+            <span class="solid">
+                |
+            </span>
+            <a class="black" href="http://39.100.209.170:9006/secur/signin.aspx" target="_blank">医院OA系统</a>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="box spacing">
+            <div class="flex_row">
+                <div class="left">
+                    <p>地&nbsp;&nbsp;址：山西省太原市并州西街46号</p>
+                    <p>邮&nbsp;&nbsp;编：030012</p>
+                    <p>咨询电话：0351-4668290</p>
+                </div>
+                <div class="right">
+                    <p>
+                            <a href="http://localhost:8080/html/web/gonggongdibu1425296884772192257/1425300529899192322.html" target="_blank">版权声明</a>
+                            <a href="http://localhost:8080/html/web/gonggongdibu1425296884772192257/1425301745014226946.html" target="_blank">隐私声明</a>
+                            <a href="http://localhost:8080/html/web/gonggongdibu1425296884772192257/1425305752109662209.html" target="_blank">联系我们</a>
+                            <a href="http://localhost:8080/html/web/gonggongdibu1425296884772192257/1425307103078203393.html" target="_blank">意见箱</a>
+                    </p>
+                    <p>
+                        Copyright 山西省中医院 All Rights Reserved. 本站内容仅供参考，不作为诊断及医疗依据
+                    </p>
+                    <p>
+                        <img style="vertical-align: middle;" src="http://localhost:8080/template/1/new_hospital/images/country.jpg" alt="">
+                        <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=14010602060667" target="_blank">晋公网安备
+                            14010602060667号</a> <a
+                            href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">备案号：晋ICP备12002475号</a>
+                    </p>
+                    <p>
+                        网站建设：北京凤凰世纪科技有限公司
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    </div>
+</body>
+<script src="http://localhost:8080/template/1/new_hospital/js/jquery.js"></script>
+<script src="http://localhost:8080/template/1/new_hospital/js/swiper-3.4.2.min.js"></script>
+<script src="http://localhost:8080/template/1/new_hospital/utils/head.js"></script>
+<script src="http://localhost:8080/template/1/new_hospital/js/index.js"></script>
+          <script>
+var xin = true, // true向右偏移,false向左偏移，首次为true，默认向右偏移
+            yin = true; // true向下偏移,false向上偏移，首次为true，默认向下偏移
+        var step = 1; // 每次移动偏移量
+        var delay = 10; // 定时函数定时时间
+        var $obj;
+        $(function () {
+            $obj = $("#imgDiv");
+            if($obj.length>0){
+                var time = window.setInterval("move()", delay);
+                $obj.mouseover(function () {
+                    clearInterval(time)
+                });
+                $obj.mouseout(function () {
+                    time = window.setInterval("move()", delay)
+                });
+            }
+        });
+ 
+        function move() {
+            var left = $obj.offset().left;
+            var top = $obj.offset().top;
+            var L = T = 0; //左边界和顶部边界
+            var R = $(window).width() - $obj.width(); // 右边界
+            var B = $(window).height() - $obj.height(); // 下边界
+ 
+            //难点:怎样判断广告的4个边框有没有超出可视化范围!
+            if (left < L) {
+                xin = true; // 水平向右移动
+            }
+            if (left > R) {
+                xin = false; // 水平向左移动
+            }
+            if (top < T) {
+                yin = true; // 垂直向下移动
+            }
+            if (top > B) {
+                yin = false; // 垂直向上移动
+            }
+            //根据有没有超出范围来确定广告的移动方向
+            left += step * (xin == true ? 1 : -1);
+            top += step * (yin == true ? 1 : -1);
+            // 给div 元素重新定位
+            $obj.offset({
+                top: top,
+                left: left
+            })
+        }
+        //关闭
+        $(function () {
+            $("#a").click(function (e) {
+                e.stopPropagation();
+                var b = $("#a").parent();
+                $(b).remove();
+            })
+        })
+</script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            selectedDepart: {},
+            departments: [
+                {
+                    typetitle: "临床科室",
+                    children: [
+                        {
+                            typetitle: "肛肠科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/gangchangke/index.html",
+                            descrip: `山西省中医院肛肠科成立于1958年。现开设床位26张，共有医师7名，其中高级职称1名，中级职称3名，初级职称2名；其中博士研究生学历者1名、硕士研究生学历者4名。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626333700638.jpg"
+                        },
+                        {
+                            typetitle: "内分泌科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/neifenmike/index.html",
+                            descrip: `内分泌科成立于1990年，是全国建立较早的中医内分泌专科。2004年成为硕士研究生培养学科，2007年被确定为山西省重点中医专科建设科室，2008年成为国家中医药管理局重点专科协作组成员单位，参加糖尿病周围神经病变全国协作工作，为国家药物临床研究机构。2011年通过省中医药管理局验收，确定为山西省重点中医专科。2012年成为国家中医药管理局“十二五”重点专科建设单位和省中医药重点学科建设科室。现设有内分泌专科门诊、病房、肌电图室，医护人员31名，其中省优秀专家、硕士生导师2名，主任医师3名，副主任医师2名，主治医师4名，副主任护师2名，主管护师3名，技师1名，床位45张，年门诊量26000余人次。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626340066596.jpg"
+                        },
+                        {
+                            typetitle: "乳腺科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/ruxianke/index.html",
+                            descrip: `乳腺科是山西省中医院“十一五”期间重点支持和建设的特色专科，科室现有省优秀专家、名老中医一名；学科带头人、主任医师一名；乳腺专业硕士研究生四名。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626343694258.jpg"
+                        },
+                        {
+                            typetitle: "肺病科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/feibingke/index.html",
+                            descrip: `山西省中医院肺病科（呼吸科），系山西省重点专科。科室医护总人数32人，其中主任医师2名，副主任医师2名，主治医师3名，住院医师3名，其中硕士研究生导师2名，医学博士2名，医学硕士6名。科室床位45张，每年收治住院患者约1800人，门诊约22000余人，外地住院患者占40%，床位使用率120%以上。科室目前由门诊、普通病房、重症监护病房、肺功能室、支气管镜室、变态反应室组成。拥有OlympusEF-260电子支气管镜2条，床旁气管镜1条，肺功能检测仪3台（大型德国耶格肺功能仪1台，可做激发试验、舒张试验、弥散试验），有创及无创呼吸机10余台，心电监护12台、微量泵20余台，以及震动排痰机等先进医疗设备。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626330503558.jpg"
+                        },
+                        {
+                            typetitle: "胸外科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/xiongwaike/index.html",
+                            descrip: `山西省中医院胸科现开设床位20张，开展肺、食管、纵隔、胸壁、膈肌良恶性疾病及各种胸外伤、肋骨骨折、血气胸、肺损伤、创伤性湿肺等疾病的诊断与治疗。尤其擅长胸腔镜下漏斗胸、鸡胸的畸形矫治及肺、胸膜活检、肺大疱切除、肺楔形切除、肺叶切除、食管癌根治术。采用中医、西医结合方法，治疗各种术后并发症，尤其是脓胸、食管、气管瘘，为患者提供个性化的治疗方案。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626328882419.jpg"
+                        },
+                        {
+                            typetitle: "耳鼻喉科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/erbihouke/index.html",
+                            descrip: `耳鼻喉科是我省最早从事中医、中西医结合耳鼻喉专业的科室。现有主任医师一名，主治医师一名，住院医师一名，其中两名为耳鼻喉科硕士研究生。
+该科引进奥林巴斯电子纤维喉镜、鼻内窥镜、耳内窥镜、丹麦电子听力检查仪、声导抗、耳鼻喉科综合治疗台等先进的诊疗设备，注重发挥中医药特色，采用中西医结合的方法诊治本科常见病、多发病、疑难病。除运用中草药内服辩证施治疾病外，还开展了中药雾化吸入、穴位贴敷、中药鼻腔冲洗、针灸、艾灸、耳穴压豆、放血疗法、扁桃体烙术、扁桃体啄治法、穴位注射、穴位埋线、微波理疗等外治疗法。治疗急慢性鼻炎、鼻窦炎、过敏性鼻炎、咽炎、扁桃体炎、咽异感症、声带白斑、外耳湿疹、渗出性中耳炎、化脓性中耳炎、耳鸣耳聋、梅尼埃病等耳鼻喉科疾病，疗效显著，中医特色突出。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626329930484.jpg"
+                        },
+                        {
+                            typetitle: "针灸科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/zhenjiuke/index.html",
+                            descrip: `针灸科是山西省中医院的特色科室，成立于1957年，现有主任医师2名，副主任医师1名，主治医师3名，住院医师4名，其中硕士研究生5名。我科秉承“针灸为主，综合治疗，提高疗效”的宗旨，经过多年的积累和总结，逐步形成了我科最具特色和优势的四种疗法，即“三步分期针法”治疗周围性面瘫；“大针针刺督脉针法”治疗癫痫等神志疾病；“交通任督二脉针法”治疗偏瘫；“补中益气针法”治疗多种疑难杂症。另外，穴位埋线治疗肥胖和慢性疾病，针刺和灸法结合治疗退行性骨关节病也逐渐成为我科的特色疗法。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626347196865.jpg"
+                        },
+                        {
+                            typetitle: "康复科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/kangfuke/index.html",
+                            descrip: `山西省中医院康复科是集医疗、科研、教学于一体的多功能临床科室，是省内三级甲等医院中临床规模最大，设备最齐全，技术实力最强的康复医学中心之一。现有门诊康复治疗大厅400平方米，住院康复大厅300平方米，康复病区病房33张。现有医护治疗人员23名，硕士生导师2名，主任医师1名，副主任医师1名，主治医师1名，住院医生3名，康复治疗师4名，康复专科护师13名。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626329117110.jpg"
+                        },
+                        {
+                            typetitle: "脑病科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/naobingke/index.html",
+                            descrip: `脑病科为我省首创中西医结合治疗神经系统疾病和神志病（焦虑抑郁症、失眠、更年期综合征）中心，重点特色专科，国家级神志病重点专科，脑病省级重点专科。现有病床59张，医护人员47名，其中博士生导师1名，硕士生导师2名，主任医师4名，副主任医师3名，心理治疗师1名，康复治疗师1名，全国第4批继承老中医药专家学术经验继承人1名，山西省首批中青年领军人才培养对象1名，国家临床优秀人才1名，山西省第2批优秀中医临床人才2名。我科在中西医结合治疗神经系统疾病和神志病方面疗效显著，尤其在脑血管病、顽固性头痛、眩晕等方面以中医辨证为本，标本兼治。年门诊量40000人次，科室承担多项国家级、省级课题项目，并多次获得科技进步奖。由于科室中医特色突出，尤其焦氏头针技术的独特手法及显著疗效，相继有国际医学团队前来参观学习，并且多次接待卫计委及国家中医药管理局领导参观。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626342835598.jpg"
+                        },
+                        {
+                            typetitle: "老年病科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/laonianbingke/index.html",
+                            descrip: `老年病科成立于80年代 , 是全国成立最早的中医老年病专科之一。现开设床位27张，有医护人员19名，主任医师4名，副主任医师2名，主治医师1名，住院医师1名，其中硕士生导师1名，具有博士学历者1名，硕士学历者5名。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1624613262971.jpg"
+                        },
+                        {
+                            typetitle: "皮肤科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/pifuke/index.html",
+                            descrip: `皮肤科是山西省中医院特色专科、院重点学科，开设病床16张，现有山西省名医1名,院名医1名，主任医师3名，副主任医师1名，主治医师3名，住院医师1名，硕士研究生导师3名，护士28名，人才整体素质高，专业技术精湛，专科特色鲜明，突出中医优势，采用必要的中西医结合，博采众长，结合现代医学科技手段，治疗各种常见及疑难性皮肤病性病，同时开展注射微整形美容术及减肥塑形、中医治疗脱发。皮肤科年门诊量达6万余人次，治疗效果显著，受到患者一致好评。我科承担完成山西省科技攻关项目三项，一项获山西省科技进步二等奖，一项获省科技进步三等奖。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626346140309.jpg"
+                        },
+                        {
+                            typetitle: "介入血管科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/jieruxueguanke/index.html",
+                            descrip: `介入放射学是近年来发展起来的一门新兴学科，在医学影像设备监视导向下，利用微创（或无创）手段，达到以诊断或治疗为目的的医疗手段的总称。介入治疗时，在高清晰影像设备引导下，通过各种微创性器械，在体外进行操作，对体内病变进行诊断和治疗。具有“损伤小、见效快、疗效好、可重复”等特点。介入学科已经成为现代临床治疗与内科、外科三足鼎立的一门学科。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626345841061.jpg"
+                        },
+                        {
+                            typetitle: "内科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/neike/index.html",
+                            descrip: `我院内科是山西省中医院的传统科室之一，内科病房在医院的大力支持下由柏晋梅主任医师挑头组建而成，现有主任医师1名，副主任医师1名，硕士研究生6名。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1624609514170.jpg"
+                        },
+                        {
+                            typetitle: "口腔科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/kouqiangke/index.html",
+                            descrip: `山西省中医院口腔科，原身山西省中医院五官科，口腔科正式独立建科于2008年。口腔科拥有3台牙科综合治疗椅，开展牙体牙髓病，牙槽外科，牙体缺损及牙列缺损修复等治疗业务，还开展种植牙，全瓷冠贴面修复等先进治疗项目。口腔科门诊配备三星数字化全景X光机，快速灭菌器，根管定位仪，PROTAPER机用镍钛根管预备系统，超声根管仪，赛特力洁牙系统，牙种植微动力系统等先进设备，拥有精湛的医疗技术，分工细致，多专业合作。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1624608043336.jpg"
+                        },
+                        {
+                            typetitle: "妇科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/fuke/index.html",
+                            descrip: `山西中医院妇科成立于1957年，拥有全国老中医药专家学术经验继承指导老师3人及其学术继承人7人,享受国贴专家1人,省名中医2人,院名医5人,青年名医1人。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626332662055.jpg"
+                        },
+                        {
+                            typetitle: "核医学科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/heyixueke/index.html",
+                            descrip: `疼痛已被现代医学列为继呼吸、脉搏、血压、体温之后的第五大生命体征。有些慢性疼痛本身还是一种疾病(如三叉神经痛、带状疱疹后遗神经痛等)。长期的局部疼痛会形成复杂的局部疼痛综合征或中枢性疼痛 , 使普通的疼痛变得非常剧烈和难以治疗,导致机体各系统功能失调、免疫力降低而诱发各种并发症，甚至致残或危及病人的生命。长期疼痛不仅严重影响患者的躯体、心理和社交功能，而且还影响到其家庭乃至社会。为所有疼痛患者提供治疗，是各国医疗服务的共同目标。我院疼痛科采用传统中医药和现代医学相结合的诊疗手段治疗各种急性和慢性顽固性疼痛，为患者创造无痛轻松生活。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1628430925252.jpeg"
+                        },
+                        {
+                            typetitle: "血液科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/xueyeke/index.html",
+                            descrip: `血液科是中医、中西医结合治疗血液病特色专科和科研教学基地。现有主任医师2名，省优秀专家2名，院名老中医1名，山西省卫生厅跨世纪学科带头人1名。副主任医师1名，硕士研究生7名。该科以突出中医、中西医结合特色医疗为主导，治疗各种血液病取得了良好的疗效。如：慢性再生障碍性贫血、特发性血小板减少性紫癜、过敏性紫癜、骨髓增生异常综合征、白血病以及继发性细胞免疫缺陷病等。自行研制的药物：宁血Ⅰ号、宁血Ⅱ号、宁血Ⅲ号、益髓康胶囊、强盾冲剂疗效显著，深受广大患者的认可。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626343306453.jpg"
+                        },
+                        {
+                            typetitle: "风湿病科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/fengshibingke/index.html",
+                            descrip: `山西省中医院风湿科成立于2005年8月。通过建设省级重点中医专科，科室取得了良好的发展，知名度逐渐提高，多次获得医院先进科室，并获得山西省省级青年文明号等荣誉。“十一五” 期间加入国家中医药管理局重点专科风湿病协作组，“十二五”期间成为山西省卫生厅重点学科、国家中医药管理局重点专科、痹病学科建设单位。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626331121282.jpg"
+                        },
+                        {
+                            typetitle: "男性科门诊",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/nanxingbing/index.html",
+                            descrip: `我院男科门诊，成立于八十年代中期，以中医中药诊疗为特色和优势，经过近三十年的发展，已成为我院门诊工作的一大亮点，病源覆盖全省大部，甚至不乏来自周边省市的患者。近年来，男科门诊狠抓了突出中医中药诊治男科疾病，特别是男科疑难性疾病的特色与优势，不断总结经验，提高诊疗水平。门诊人次逐年增加，诊疗水平不断提高，基本形成了以中医药诊疗为特色的男科优势病种三种：男性不育症、前列腺疾病、性功能障碍等。出诊医师四人，包括主任医师、省优秀专家一名，副主任医师一名，主治医师一名，医师一名。年门诊总人次逾1.4万余人次。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1624607960869.jpg"
+                        },
+                        {
+                            typetitle: "脊柱外科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/jizhuwaike/index.html",
+                            descrip: `山西省中医院脊柱外科，前身为山西省创伤骨科医院，在省内师从我省骨科老前辈马景昆教授，国内师从北京协和医院叶启斌教授，北医三院党耕町教授，与北京协和医院，北医三院，301医院等有密切协作关系。为突出专科特色，在院领导的关怀下于2005年初成立脊柱外科，设床位26张，开设专科门诊，为我院特色重点专科。主要诊治脊柱侧弯，退行性脊柱关节病，腰椎间盘突出、颈椎病、脊柱肿瘤，骨质疏松症。其中脊柱矫形，退行性脊柱关节病及骨质疏松症诊疗在国内领先。该科秉承；创建特色专科，打造优势品牌，解除脊柱疾患的宗旨，在院领导的支持下，在全体职员工的努力下，为广大患者创造一个优良的就医环境。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1624607700267.jpg"
+                        },
+                        {
+                            typetitle: "肾病三科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/shenbingsanke/index.html",
+                            descrip: `肾病三科是我院基于特色科室做大做强的宗旨于2011年发展成立的，包括病房、门诊和血液净化中心三部分。开放病床40张，有各级专业技术人员40人。科室先进的肾活检技术和腹膜透析技术在山西省享有盛誉，有多种中西医结合治疗肾小球疾病和肾功能衰竭特色技术，在国内最早诊断传染性单核细胞增多症肾损害，国内最先提出足细胞病的中西医结合多靶点治疗方案，在省内最早诊断小血管炎肾损害，腹膜透析在我省规模最大，为我院肾病事业赢得了新的声誉。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626339300147.jpg"
+                        },
+                        {
+                            typetitle: "肾病一科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/shenbingyike/index.html",
+                            descrip: `山西省中医院肾病一科，是我院最早的特色专科和重点成果学科，是优秀国家中医药管理局“十一五”重点专科，60年代由全国名医孙郁芝、于家菊教授创建，发展至今已成为全省乃至全国规模最大的现代化的中西医结合肾脏病诊疗中心，包括门诊、病房、血液透析室、腹膜透析室、结肠透析室和实验室六部分。现有医护人员35人，国家级名医1人，省级名医1人，院级名医1人，学术经验继承人4人，高级职称6人，博士研究生2名，硕士研究生7人，是一支医德高尚、技术精湛、团结和谐、开拓进取的优秀中西医结合人才队伍。目前设有床位57张，拥有先进的诊断和检测技术、肾病诊疗规范及操作技术、肾脏穿刺活检病理检测技术、血液净化技术、腹膜透析技术、结肠透析技术、肾脏病急危重症及并发症救治技术等诸多优势，已形成技术力量雄厚、专科方向明确、诊疗特色突出、诊疗手段齐全、诊疗方案完备、临床效果显著的特色专科。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626338905008.jpg"
+                        },
+                        {
+                            typetitle: "肿瘤科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/zhongliuke/index.html",
+                            descrip: `山西省中医院肿瘤科是以中医为特色，集中医、化疗、放疗、介入、海扶超声治疗等多学科综合治疗为一体的肿瘤临床专科。在著名专家王晞星教授、刘丽坤教授的带领下，经过多年的努力，肿瘤科已发展壮大成为国内颇具一定影响的临床肿瘤专科之一。目前是国家临床重点专科，国家中医药管理局重点专科及重点学科,国家中医药管理局首批重点研究室中医肠疗研究室主要承担科室，国家药品监督管理局新药临床研究基地，山西省中医、中西医结合肿瘤专业委员会的牵头单位，是山西省中医、中西医结合肿瘤临床、教学、科研基地。获全国卫生系统先进集体、全国青年文明号称号。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626337631623.jpg"
+                        },
+                        {
+                            typetitle: "普外科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/puwaike/index.html",
+                            descrip: `山西省中医院外科是一个集医疗、教学、科研为一体的，以手术与中医治疗相结合的特色科室，成立于1957年，是全省成立最早的中西医结合治疗外科疾病科室。包括肝胆、胃肠、疝与腹壁、外周血管、泌尿、腺体等专业。现有主任医师2人，副主任医师2人，主治医师2人，住院医师3人，其中硕士研究生6人。现开设床位57张，年手术量500余例。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626345582683.jpg"
+                        },
+                        {
+                            typetitle: "儿科",
+                            typelink: "http://localhost:8080/html/web/department/linchuangkeshi/erke/index.html",
+                            descrip: `儿科是以中医特色疗法治疗小儿疾病的科室，开设儿科门诊40余年，科室技术力量逐渐壮大，现有医师共5人，主任医师2名，副主任医师1名，住院医师2名，其中包括省优秀专家、名医1名。年门诊量近3万人次。临床主要采用中医中药治疗小儿肺系（如感冒、咳嗽、肺炎喘嗽、哮喘及反复呼吸道感染等）、脾系（如呕吐、泄泻、腹痛、厌食、积滞、疳疾等）、心肝系（如汗证、夜啼、抽动症、多动症、惊风等）及肾系（如尿频、遗尿、肾炎、肾病综合征等）疾病，均取得了良好的疗效，以中药口服及中医外治相结合为主。尤其对某些西药治疗效果不显著的病例，更显示了中医中药的独到之处。如近年来逐渐增多的“小儿多动症”及“小儿抽动症”，逐渐成为中医儿科优势病种。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1624607853082.jpg"
+                        },
+                    ]
+                },
+                {
+                    typetitle: "医技科室",
+                    children: [
+                        {
+                            typetitle: "药剂科",
+                            typelink: "http://localhost:8080/html/web/department/yijikeshi/yaojike/index.html",
+                            descrip: `我院药剂科是国家中医药管理局临床药学重点专科、重点学科，是医院药事管理与药物治疗学委员会的常设机构，负责对全院药品的管理。药剂科下设药房（包括门诊草药房、门诊成西药房、制剂药房、小包装饮片药房、中药免煎颗粒药房、急诊药房、住院草药房和住院成西药房）、药品不良反应监测室和临床药学室。负责全院的药品的调剂、处方点评、药品质量监测、药物不良反应监测、参与临床合理用药、药物咨询等药事管理和临床药学工作。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626349852184.jpg"
+                        },
+                        {
+                            typetitle: "病案统计室",
+                            typelink: "http://localhost:8080/html/web/department/yijikeshi/bingantongjishi/index.html",
+                            descrip: `病案统计室简介成立于1987年，现有工作人员11人，其中主任医师1名，主管护士3名，统计师1名，专业管理人员2名。现保存1957-2009年的住院病历8万余册。承担着病历收集、整理、登记、疾病分类、录入、终末质量检查、统计、随访、复印、病历使用等工作。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1628431016864.jpeg"
+                        },
+                        {
+                            typetitle: "消毒供应室",
+                            typelink: "http://localhost:8080/html/web/department/yijikeshi/xiaodugongyingshi/index.html",
+                            descrip: `消毒供应室是医院内承担各临床科室所有重复使用诊疗器械、器具和物品清洗、消毒、灭菌以及无菌物品供应的部门，是保证医疗、护理质量及控制医院感染的关键科室。近年来，随着医院的快速发展，门诊及住院病人逐年增多，消毒供应室的工作量也随之增多。每年发放一次性医疗用品100余万支（个），包括一次性输液器、输血器、注射器、针头、采血管、采血针、棉签、棉球、纱布、无菌手套，一次性胃包、导尿包、胸穿包、腹穿包、腰穿包、骨穿包，一次性胶贴、无纺布、孔巾等，价值200余万元。为临床科室消毒无菌包1万余个。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1628431000111.jpeg"
+                        },
+                        {
+                            typetitle: "综合检查科",
+                            typelink: "http://localhost:8080/html/web/department/yijikeshi/zonghejianchake/index.html",
+                            descrip: `综合检查科彩超室技术力量雄厚，全科共13人，高级主任级医师2名。具有超声影像专业高技术人才硕士7名，本科2名，专科2名，中专及其他2名。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626349338869.jpg"
+                        },
+                        {
+                            typetitle: "营养科",
+                            typelink: "http://localhost:8080/html/web/department/yijikeshi/yingyangke/index.html",
+                            descrip: `营养科是对各种原因引起的营养代谢病（包括营养失调）的患者通过营养检测和评价进行营养诊断，并使用药品或特殊医疗用途食品对患者进行营养治疗的业务科室。我院营养科现设置门诊区和肠内营养配制室，主要负责门诊及住院患者营养状况评价、各种疾病及特殊人群的营养治疗。根据个人身体状况、病情、体检结果并结合生活方式为患者提供科学的个体化的营养支持治疗。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1624619318477.jpg"
+                        },
+                        {
+                            typetitle: "放射科",
+                            typelink: "http://localhost:8080/html/web/department/yijikeshi/fangsheke/index.html",
+                            descrip: `放射科建院成立以来，发展至今共22名工作人员，其中高级职称4名，中级职称8名，医师8名，中级技师3名，主管护士2名，博士1名，硕士15名。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626330135131.jpg"
+                        },
+                        {
+                            typetitle: "院感科",
+                            typelink: "http://localhost:8080/html/web/department/yijikeshi/yuanganke/index.html",
+                            descrip: `医院感染管理工作是现代医院管理的主要组成部分，逐渐成为体现一所医院医疗质量和医疗技术水平的重要标志。在院领导的重视下，我院于2004年初正式成立了由医、护、技组成，人员配备合理的医院感染管理科。根据医院发展和实际情况，调整和健全了医院感染管理委员会和医院临床感染监控小组的组织机构及人员组成，使组织机构更加合理完善，形成了医院感染三级管理网络。从组织落实，严格监测，严格管理措施三个环节入手，实施全面有效地医院感染管理。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1628430980544.jpeg"
+                        },
+                        {
+                            typetitle: "病理科",
+                            typelink: "http://localhost:8080/html/web/department/yijikeshi/binglike/index.html",
+                            descrip: `病理科成立于1960年，主要承担院内临床病理学检查以及院内外科研任务和研究生课题的病理实验研究。年病检量约7000例，参与合作多项科研课题并获奖，其中《治疗高脂血症中药新药治清胶囊的研制》获省科技进步二等奖、《生脉注射液逆转胃癌多药耐药的研究》获省科技进步二等奖、《降脂益肝茶治疗非酒精性脂肪肝临床与实验研究》获省科技进步三等奖。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626329384952.jpg"
+                        },
+                        {
+                            typetitle: "检验科",
+                            typelink: "http://localhost:8080/html/web/department/yijikeshi/jianyanke/index.html",
+                            descrip: `山西省中医院检验科经过半个多世纪的发展和几代人的努力，尤其是在我省著名检验学专家张俊卿、黄元桐两位老教授的鼎力支持、帮助和指导下，现已从最初简单的化验室逐渐发展成为检测设备较新、检验项目齐全、技术质量稳定、团队精神突出、管理理念先进的现代化综合科室。目前在职人员27人，合同制职工15人，其中高级职称7名、中级职称14名、初级职称19名。近年来，通过全科同志的共同努力，已经取得了社会效益和经济效益的双丰收，赢得了社会各界的普遍赞誉，连续数年保持医院“先进集体”称号，2004年及2007年分别获得了由山西省妇女联合会颁发的“山西省巾帼文明示范岗”和“山西省三八红旗集体”称号；2005年及2015年被评为本院的重点学科。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1626349496636.jpg"
+                        },
+                        {
+                            typetitle: "麻醉科",
+                            typelink: "http://localhost:8080/html/web/department/yijikeshi/mazuike/index.html",
+                            descrip: `我院麻醉手术科综合多学科理论与技术，是集医疗、科研、教学为一体的一级临床科室，由密不可分的医护单元组成，是医院临床医学的重要组成部分。现有医护人员24人，其中麻醉医师10人，硕士以上学历6人，手术室护士14人，均具有本科以上学历（其中在读硕士1人）。经过几代人的努力，形成一支技术力量雄厚，人才梯队健全合理的医学专业学术队伍。新住院大楼手术间设备先进，功能完善，内设国际标准化，高级别层流净化手术间4间，每间均配备进口多功能麻醉机与监护仪，科室拥有可视喉镜，血气分析仪、除颤仪，多套进口腹腔镜系统，X光C型臂，微量输液泵、进口电刀、电凝等先进设备。`,
+                            image: "http://localhost:8080/upload/1/cms/content/1624621125510.jpg"
+                        },
+                    ]
+                },
+            ],
+            num:0,
+            typePath: '0',
+            screenWidth: '',
+            isMobile: true
+        },
+        mixins: [mixin],
+        methods: {
+            setDepartment: function(depart,idx) {
+                console.log("selectDepart is:", depart)
+                $('.departList .uls .lis').removeClass('active');
+                this.selectedDepart = depart
+                this.num = idx;
+                $('.departList .uls .lis').eq(idx).addClass('active');
+            }
+        },
+        created() {
+            this.num = 0;
+            $('.departList .uls .lis').eq(0).addClass('active');
+            if (this.departments.length > 0 && this.departments[0].children.length > 0) {
+                this.setDepartment(this.departments[0].children[0])
+            }
+        },
+        mounted(){
+            this.screenWidth = document.documentElement.clientWidth;
+            if(this.screenWidth<=750){
+                this.isMobile = false
+            }
+        }
+    })
+
+    $('.bottomBack').hide();
+    // 处理底部板块的高度
+    if(document.documentElement.clientWidth<=750){
+        let liWidth = $('.introduce .ul_wrap li').eq(0).width();
+        for(var i=0;i<$('.introduce .ul_wrap li').length;i++){
+            $('.introduce .ul_wrap li').eq(i).css({
+                height:liWidth+'px'
+            })
+        }
+    }
+    var mySwiper = new Swiper ('.swiper-container', {
+        // autoplay: false,
+        // duration: 1000,
+        // loop: true,
+        autoplay: 3000,
+        mousewheel: {
+            releaseOnEdges: true,//PC端释放滑动
+        },
+        paginationClickable:true,
+        pagination: '.swiper-pagination',
+        nextButton: '.swiper-button-next',
+        prevButton: '.swiper-button-prev',
+    })
+    $('.swiper-container').hover(function(){
+        mySwiper.stopAutoplay();
+    },function(){
+        mySwiper.startAutoplay();
+    })
+    var mySwiper_child = new Swiper ('.swiper-container-child', {
+        loop: true,
+        autoplay: 3000,
+        mousewheel: {
+            releaseOnEdges: true,//PC端释放滑动
+        }, 
+        paginationClickable:true,
+        pagination: '.swiper-pagination',
+        autoplayDisableOnInteraction : false  /* 注意此参数，默认为true */
+    })
+    $('#newsOne .back').hover(function(){
+        $('#newsOne .back').removeClass('active');
+        $(this).addClass('active');
+        $('.News .left_box .cont').hide();
+        $('.News .left_box .cont').eq($(this).index()).show()
+        let title = $(this).html();
+        $('.News .left_box .browseMore').removeClass('active');
+        $('.News .left_box .browseMore').html('浏览更多'+title + '&nbsp &nbsp' + '+')
+        $('.News .left_box .browseMore').eq($(this).index()).addClass('active');
+        let idx = $(this).index();
+        mySwiper_child[idx].init();
+        mySwiper_child[idx].stopAutoplay();
+        mySwiper_child[idx].startAutoplay();
+    },function(){
+        $(this).addClass('active');
+    })
+    $('.swiper-container-child').hover(function(){
+        let idx = $(this).parents('.cont').index()-1;
+        mySwiper_child[idx].stopAutoplay();
+    },function(){
+        let idx = $(this).parents('.cont').index()-1;
+        mySwiper_child[idx].startAutoplay();
+    })
+    var mySwiperChild = new Swiper ('.swiper-container-child_Two ', {
+        autoplay: 2000,
+        mousewheel: {
+            releaseOnEdges: true,//PC端释放滑动
+        }, 
+        paginationClickable:true,
+        pagination: '.swiper-pagination',
+        nextButton: '.swiper-button-next',
+        prevButton: '.swiper-button-prev',
+    })
+    setTimeout(()=>{
+        var mySwiper1 = new Swiper('.swiper-container1', {
+            slidesPerView: 6,
+            spaceBetween: 18,
+            // loop: true,
+            autoplay: 2000,
+            paginationClickable:true,
+            observer:true,
+            observeParents:true,
+            pagination: '.swiper-pagination1',
+        });
+        mySwiper1.container[0].onmouseover=function() {
+            mySwiper1.stopAutoplay();
+        }
+        // 鼠标移出开始自动滚动
+        mySwiper1.container[0].onmouseout=function() {
+            mySwiper1.startAutoplay();
+        }
+    },300)
+    // setTimeout(()=>{
+        var mySwiper_mobile = new Swiper('.swiper-container-mobile', {
+            autoplay: 2000,
+            slidesPerView: 'auto',
+            paginationClickable:true,
+            observer:true,
+            observeParents:true,
+            pagination: '.swiper-pagination-mobile',
+        });
+    // },100)
+    window.onload = function(){
+        $('.departList .uls .lis').eq(0).addClass('active');
+        for(var i = 0; i < $('.News .cont').length; i++){
+            for(var j = 0; j < $('.News .cont').eq(i).find('.swiper-slide').length; j++){
+                let flag = $('.News .cont').eq(i).find('.swiper-slide').eq(j).attr('flag') || '';
+                console.log('flag:',flag);
+                if(flag!=""&&flag.indexOf('tv')!=-1){
+                    let dom = $('.News .cont').eq(i).find('.swiper-slide').eq(j).find('.hidden');
+                    let link = dom.find('a').html();
+                    console.log('link:',link)
+                    $('.News .cont').eq(i).find('.swiper-slide').eq(j).one('click',function(){
+                        window.open(link);
+                    })
+                }
+            }
+            for(var k = 0; k < $('.News .cont').eq(i).find('.row_wrap').length; k++){
+                let flag = $('.News .cont').eq(i).find('.row_wrap').eq(k).attr('flag') || '';
+                console.log('flagj:',flag);
+                if(flag!=""&&flag.indexOf('tv')!=-1){
+                    let dom = $('.News .cont').eq(i).find('.row_wrap').eq(k).find('.hidden');
+                    let link = dom.find('a').html();
+                    console.log('link:',link)
+                    $('.News .cont').eq(i).find('.row_wrap').eq(k).one('click',function(){
+                        window.open(link);
+                    })
+                }
+            }
+        }
+    }
+</script>
+
+</html>

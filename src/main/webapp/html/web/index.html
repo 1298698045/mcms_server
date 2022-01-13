@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>山西省中医院</title>
+    <link rel="stylesheet" href="http://localhost:8080/template/1/new_hospital/css/swiper-3.4.2.min.css">
+    <link rel="stylesheet" href="http://localhost:8080/template/1/new_hospital/css/login.css">
+    <link rel="shortcut icon" href="http://localhost:8080/template/1/new_hospital/images/favicon.png" type="image/x-icon" />
+</head>
+<body>
+    <div class="wrap" id="app" v-cloak>
+        <div class="header"></div>
+        <div class="center">
+            <div class="container">
+                <div class="nav">
+                    <div class="logo">
+                        <img src="http://localhost:8080/template/1/new_hospital/images/newLogo.png" alt="">
+                    </div>
+                    <div class="right_icons">
+                        <div>
+
+                            <div class="box l1" title="预约挂号"></div>
+                            <div class="box l2">
+                                <div class="qrCode">
+                                    <img src="http://localhost:8080/template/1/new_hospital/images/sx_weibo.jpg" alt="">
+                                </div>
+                            </div>
+                            <div class="box l3">
+                                <div class="qrCode active">
+                                    <img src="http://localhost:8080/template/1/new_hospital/images/qrcode_m.weibo.cn.jpg" alt="">
+                                </div>
+                            </div>
+                            <div class="box l4" @click="goto('http://39.100.209.170:9006/secur/signin.aspx')"></div>
+                            <!-- <div class="box l4"></div> -->
+                        </div>
+                        <div>
+                            <div class="box l5">
+                                <div class="qrCode active">
+                                    <img src="http://localhost:8080/template/1/new_hospital/images/qrcode_m.douyin.cn.jpg" alt="">
+                                </div>
+                            </div>
+                            <div class="box l6">
+                                <div class="qrCode active">
+                                    <img src="http://localhost:8080/template/1/new_hospital/images/qrcode_m.kuaishou.cn.jpg" alt="">
+                                </div>
+                            </div>
+                            <div class="box l7">
+                                <div class="qrCode active">
+                                    <img src="http://localhost:8080/template/1/new_hospital/images/qrcode_m.shipin.cn.jpg" alt="">
+                                </div>
+                            </div>
+                            <div class="box l8">
+                                <div class="qrCode active">
+                                    <img src="http://localhost:8080/template/1/new_hospital/images/qrcode_m.toutiao.cn.jpg" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contontWrap">
+                    <div class="content">
+                        <div class="left">
+                            <div>
+                                <p class="row">咨询电话：0351-4668290</p>
+                                <p class="row">医院地址：山西省太原市并州西街46号</p>
+                                <p class="row">版本所有：山西省中医院</p>
+                                <a class="row" style="display: block;" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=14010602060667" target="_blank">
+                                    <img style="vertical-align: middle;" src="http://localhost:8080/template/1/new_hospital/images/country.jpg" alt="">
+                            晋公网安备
+                            14010602060667号</a>
+                                <a style="display: block;" href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank" class="row">网站备案号：晋ICP备12002475号</a>
+                                <!-- <p class="row">网站建设：北京凤凰世纪科技有限公司</p> -->
+                            </div>
+                        </div>
+                        <div class="right">
+                            <ul class="columns">
+                                <li class="column">
+                                    <a href="http://localhost:8080/html/web/home.html" target="_blank">
+                                        <u class="box">
+                                        </u>
+                                        <u class="radio">Patient</u>
+                                    </a>
+                                </li>
+                                <li class="column">
+                                    <a href="http://localhost:8080/html/web/employee.html">
+                                        <u class="box ygb">
+                                        </u>
+                                        <u class="radio">Staff</u>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="poFixed">
+                <div class="banner">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <a href="" target="_blank">
+                                    <img src="http://localhost:8080/upload/1/cms/content/1628477319014.jpg" alt="">
+                                </a>
+                            </div>
+                            <div class="swiper-slide">
+                                <a href="http://t-think.com/hospital/hospitalSurvey/index.html#/hospitalSurvey/look" target="_blank">
+                                    <img src="http://localhost:8080/upload/1/cms/content/1628477183675.jpg" alt="">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="http://localhost:8080/template/1/new_hospital/js/jquery.js"></script>
+<script src="http://localhost:8080/template/1/new_hospital/js/swiper-3.4.2.min.js"></script>
+<script type="text/javascript" src="/static/plugins/vue/2.6.9/vue.js"></script>
+<script type="text/javascript" src="/static/plugins/vue-router/3.5.1/vue-router.js"></script>
+<script src="http://localhost:8080/template/1/new_hospital/js/app.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            typePath: '0'
+        },
+        mixins: [mixin],
+        methods: {},
+        created: function(){
+        }
+    })
+    var mySwiper = new Swiper ('.swiper-container', {
+        autoplay: 3000,
+        mousewheel: {
+            releaseOnEdges: true,//PC端释放滑动
+        }
+    })  
+</script>
+</html>

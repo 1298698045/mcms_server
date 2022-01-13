@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.mingsoft.custom.dao.IExpertDao">
+
+	<resultMap id="resultMap" type="net.mingsoft.custom.entity.ExpertEntity">
+		<id column="id" property="id" /><!--编号 -->
+		<result column="name" property="name" /><!--姓名 -->
+		<result column="gender" property="gender" /><!--性别 -->
+		<result column="portrait" property="portrait" /><!--头像 -->
+		<result column="job_number" property="jobNumber" /><!--工号 -->
+		<result column="schedule" property="schedule" /><!--出诊时间 -->
+		<result column="stopping_start" property="stoppingStart" /><!--停诊开始时间 -->
+		<result column="stopping_end" property="stoppingEnd" /><!--停诊截止时间 -->
+		<result column="field" property="field" /><!--领域 -->
+		<result column="department_id" property="departmentId" /><!--科室 -->
+		<result column="good_at" property="goodAt" /><!--擅长 -->
+		<result column="technical_title" property="technicalTitle" /><!--职称 -->
+		<result column="position" property="position" /><!--职务 -->
+		<result column="teching_post" property="techingPost" /><!--教学任职 -->
+		<result column="brief_intro" property="briefIntro" /><!--简介 -->
+		<result column="introduce" property="introduce" /><!--介绍 -->
+		<result column="create_by" property="createBy" /><!--创建人 -->
+		<result column="create_date" property="createDate" /><!--创建时间 -->
+		<result column="update_by" property="updateBy" /><!--修改人 -->
+		<result column="update_date" property="updateDate" /><!--修改时间 -->
+		<result column="del" property="del" /><!--删除标记 -->
+		<result column="content_type" property="contentType" /><!--自定义类型 -->
+		<result column="content_sort" property="contentSort" /><!--自定义排序 -->
+	</resultMap>
+
+	<resultMap id="resultMapV" type="net.mingsoft.custom.entity.VExpertEntity">
+		<id column="id" property="id" /><!--编号 -->
+		<result column="name" property="name" /><!--姓名 -->
+		<result column="gender" property="gender" /><!--性别 -->
+		<result column="portrait" property="portrait" /><!--头像 -->
+		<result column="job_number" property="jobNumber" /><!--工号 -->
+		<result column="schedule" property="schedule" /><!--出诊时间 -->
+		<result column="stopping_start" property="stoppingStart" /><!--停诊开始时间 -->
+		<result column="stopping_end" property="stoppingEnd" /><!--停诊截止时间 -->
+		<result column="field" property="field" /><!--领域 -->
+		<result column="department_id" property="departmentId" /><!--科室 -->
+		<result column="department_name" property="departmentName" /><!--科室 -->
+		<result column="department_path" property="departmentPath" /><!--科室路径 -->
+		<result column="good_at" property="goodAt" /><!--擅长 -->
+		<result column="technical_title" property="technicalTitle" /><!--职称 -->
+		<result column="position" property="position" /><!--职务 -->
+		<result column="teching_post" property="techingPost" /><!--教学任职 -->
+		<result column="brief_intro" property="briefIntro" /><!--简介 -->
+		<result column="introduce" property="introduce" /><!--介绍 -->
+		<result column="create_by" property="createBy" /><!--创建人 -->
+		<result column="create_date" property="createDate" /><!--创建时间 -->
+		<result column="update_by" property="updateBy" /><!--修改人 -->
+		<result column="update_date" property="updateDate" /><!--修改时间 -->
+		<result column="del" property="del" /><!--删除标记 -->
+		<result column="content_type" property="contentType" /><!--自定义类型 -->
+		<result column="content_sort" property="contentSort" /><!--自定义排序 -->
+	</resultMap>
+
+	<select id="listExperts" resultMap="resultMapV" parameterType="net.mingsoft.custom.entity.VExpertEntity">
+		select expert.*, cms_category.category_title department_name, cms_category.category_path department_path
+		from expert left join cms_category on expert.department_id = cms_category.id
+		<where>
+			expert.del = 0
+			<if test="id != null and id !=''"> and expert.id = #{id}</if>
+			<if test="name != null and name !=''"> and expert.name = #{name}</if>
+			<if test="departmentId != null and departmentId != ''"> and expert.department_id = #{departmentId}</if>
+			<if test="departmentName != null and departmentName != ''"> and cms_category.category_title = #{departmentName}</if>
+			<if test="jobNumber != null and jobNumber != ''"> and expert.job_number = #{jobNumber}</if>
+			<if test="position != null and position !=''"> and expert.position = #{position}</if>
+			<if test="technicalTitle != null and technicalTitle !=''"> and expert.technical_title = #{technicalTitle}</if>
+			<if test="contentType != null and contentType != ''"> and content_type LIKE CONCAT(CONCAT('%',#{contentType}),'%')</if>
+			<if test="contentType == ''"> and content_type = ''</if>
+		</where>
+		order by cms_category.category_sort, expert.content_sort
+	</select>
+
+	<select id="getExpert" resultMap="resultMapV" parameterType="net.mingsoft.custom.entity.ExpertEntity">
+		select expert.*, cms_category.category_title department_name, cms_category.category_path department_path
+		from expert left join cms_category on expert.department_id = cms_category.id
+		<where>
+			expert.del = 0
+			<if test="id != null and id !=''"> and expert.id = #{id}</if>
+		</where>
+	</select>
+
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.mingsoft.custom.dao.IAdvertisementDao">
+
+	<resultMap id="resultMap" type="net.mingsoft.custom.entity.AdvertisementEntity">
+			<id column="id" property="id" /><!--编号 -->
+				<result column="adpos_id" property="adposId" /><!--广告位 -->
+				<result column="name" property="name" /><!--广告名称 -->
+				<result column="flag" property="flag" /><!--广告类型 -->
+				<result column="is_enabled" property="isEnabled" /><!--是否开启 -->
+				<result column="date_range" property="dateRange" /><!--广告时间 -->
+				<result column="link" property="link" /><!--广告链接 -->
+				<result column="contact_phone" property="contactPhone" /><!--联系人电话 -->
+				<result column="contact_email" property="contactEmail" /><!--联系人邮箱 -->
+				<result column="contact_name" property="contactName" /><!--广告联系人 -->
+				<result column="image" property="image" /><!--广告图片 -->
+				<result column="content" property="content" /><!--广告内容 -->
+				<result column="create_by" property="createBy" /><!--创建人 -->
+				<result column="create_date" property="createDate" /><!--创建时间 -->
+				<result column="update_by" property="updateBy" /><!--修改人 -->
+				<result column="update_date" property="updateDate" /><!--修改时间 -->
+				<result column="del" property="del" /><!--删除标记 -->
+	</resultMap>
+
+
+
+</mapper>
