@@ -12,7 +12,7 @@
             return data;
         }
         // 引用数据类型
-        for (const v in data) {
+        for (var v in data) {
             if (data[v] == null) {
                 delete data[v];
             }
@@ -51,7 +51,7 @@
      * 原始数据[{id:1,titile:"标题",pid:0},{id:2,titile:"标题",pid:1}]
      * 转化树形数据：[{id:1,titile:"标题",pid:0,children:[{id:2,titile:"标题",pid:1}]}]
      */
-    function treeData(source, id, parentId, children, parentIdValue='') {
+    function treeData(source, id, parentId, children, parentIdValue) {
         var cloneData = JSON.parse(JSON.stringify(source));
         return cloneData.filter(function (father) {
             var branchArr = cloneData.filter(function (child) {

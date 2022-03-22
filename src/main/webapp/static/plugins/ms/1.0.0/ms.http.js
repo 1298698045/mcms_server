@@ -219,7 +219,7 @@
                 // 表明返回服务器返回的数据类型
                 responseType: 'blob',
                 headers: {Accept: 'application/vnd.openxmlformats-officedocument'}
-            }).then((res) => { // 处理返回的文件流
+            }).then(function(res) { // 处理返回的文件流
                 const content = res.data
                 const blob = new Blob([content])
                 //const fileName = res.headers["filename"];

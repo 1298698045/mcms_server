@@ -22,7 +22,7 @@
 						:props="defaultProps"
 						@node-click="handleNodeClick"
 						style="padding: 10px;height: 100%;">
-						<span class="custom-tree-node" slot-scope="{ node, data }" >
+						<span class="custom-tree-node" slot-scope="{  node, data }" >
 							<span :title="data.categoryTitle">{{ data.categoryTitle }}</span>
 						</span>
 				</el-tree>

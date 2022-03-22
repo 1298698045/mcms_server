@@ -68,6 +68,7 @@
 </div>
 </body>
 </html>
+<script type="text/javascript" src ="https://cdn.polyfill.io/v2/polyfill.min.js?features=es6"></script>
 <script>
   var app = new Vue({
     el: '#app',

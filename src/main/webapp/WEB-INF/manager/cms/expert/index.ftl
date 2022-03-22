@@ -66,7 +66,8 @@
 				</el-table-column>
 				<el-table-column label="职称"   align="left" prop="technicalTitle">
 				</el-table-column>
-				<el-table-column label="擅长"   align="left" prop="goodAt">
+				// 擅长
+				<el-table-column label="主要研究方向"   align="left" prop="goodAt">
 				</el-table-column>
 				<el-table-column label="出诊时间"   align="left" prop="schedule">
 				</el-table-column>

@@ -174,8 +174,8 @@ public class ExpertAction extends net.mingsoft.cms.action.BaseAction{
 		if(expert.getDepartmentId() == null){
 			return ResultData.build().error(getResString("err.empty", this.getResString("department.id")));
 		}
-		if(!StringUtil.checkLength(expert.getGoodAt()+"", 0, 64)){
-			return ResultData.build().error(getResString("err.length", this.getResString("good.at"), "0", "64"));
+		if(!StringUtil.checkLength(expert.getGoodAt()+"", 0, 200)){
+			return ResultData.build().error(getResString("err.length", this.getResString("good.at"), "0", "200"));
 		}
 		if(!StringUtil.checkLength(expert.getTechnicalTitle()+"", 0, 64)){
 			return ResultData.build().error(getResString("err.length", this.getResString("technical.title"), "0", "64"));
@@ -261,8 +261,8 @@ public class ExpertAction extends net.mingsoft.cms.action.BaseAction{
 		if(expert.getDepartmentId() == null){
 			return ResultData.build().error(getResString("err.empty", this.getResString("department.id")));
 		}
-		if(!StringUtil.checkLength(expert.getGoodAt()+"", 0, 64)){
-			return ResultData.build().error(getResString("err.length", this.getResString("good.at"), "0", "64"));
+		if(!StringUtil.checkLength(expert.getGoodAt()+"", 0, 200)){
+			return ResultData.build().error(getResString("err.length", this.getResString("good.at"), "0", "200"));
 		}
 		if(!StringUtil.checkLength(expert.getTechnicalTitle()+"", 0, 64)){
 			return ResultData.build().error(getResString("err.length", this.getResString("technical.title"), "0", "64"));

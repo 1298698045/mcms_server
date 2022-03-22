@@ -139,7 +139,8 @@ public class AttachmentAction extends net.mingsoft.cms.action.BaseAction{
 		}
 		//验证附件的值是否合法
 		if(StringUtils.isBlank(attachment.getUrl())){
-			return ResultData.build().error(getResString("err.empty", this.getResString("filepath")));
+			//this.getResString("filepath")
+			return ResultData.build().error(getResString("err.empty", "文件格式不允许，上次失败！"));
 		}
 		attachmentBiz.save(attachment);
 		return ResultData.build().success(attachment);
@@ -195,7 +196,8 @@ public class AttachmentAction extends net.mingsoft.cms.action.BaseAction{
 		}
 		//验证附件的值是否合法
 		if(StringUtils.isBlank(attachment.getUrl())){
-			return ResultData.build().error(getResString("err.empty", this.getResString("fileupload.1629447835000.37180")));
+			return ResultData.build().error(getResString("err.empty", "文件格式不允许，上次失败！"));
+			//return ResultData.build().error(getResString("err.empty", this.getResString("fileupload.1629447835000.37180")));
 		}
 		attachmentBiz.updateById(attachment);
 		return ResultData.build().success(attachment);

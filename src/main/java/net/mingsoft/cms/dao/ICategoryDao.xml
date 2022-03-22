@@ -167,11 +167,11 @@
 			<if test="updateBy &gt; 0"> and update_by=#{updateBy} </if>
 			<if test="updateDate != null"> and update_date=#{updateDate} </if>
 			<if test="del != null"> and del=#{del} </if>
-			<if test="topId != null and topId != ''"> and top_id=#{topId}</if>
+			<if test="topId != null and tonpId != ''"> and top_id=#{topId}</if>
 			<if test="leaf != null"> and leaf=#{leaf}</if>
 			<include refid="net.mingsoft.base.dao.IBaseDao.sqlWhere"></include>
 		</where>
-		ORDER BY category_sort
+		ORDER BY category_sort,create_date asc
 	</select>
 
 </mapper>

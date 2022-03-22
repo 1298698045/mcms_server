@@ -16,7 +16,7 @@
                     :gutter="0"
                     justify="start" align="top">
                     <el-col :span="12">
-                        <el-form-item  label="科室" prop="departmentId">
+                        <el-form-item  label="栏目" prop="departmentId">
                             <ms-tree-select :props="{value: 'id', label: 'categoryTitle', children: 'children'}"
                                 :options="departmentIdOptions" :style="{width:'100%'}"
                                 :value="form.departmentId" ref="treeselect"
@@ -63,26 +63,26 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item  label="职称" prop="technicalTitle">
+                        <el-form-item  label="职务" prop="technicalTitle">
                             <el-input
                                 v-model="form.technicalTitle"
                                 :disabled="false"
                                 :readonly="false"
                                 :style="{width:  '100%'}"
                                 :clearable="true"
-                                placeholder="请输入职称">
+                                placeholder="请输入职务">
                             </el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item  label="擅长" prop="goodAt">
+                        <el-form-item  label="主要研究方向" prop="goodAt">
                             <el-input
                                 v-model="form.goodAt"
                                 :disabled="false"
                                 :readonly="false"
                                 :style="{width:  '100%'}"
                                 :clearable="true"
-                                placeholder="请输入擅长">
+                                placeholder="请输入主要研究方向">
                             </el-input>
                         </el-form-item>
                     </el-col>
@@ -125,26 +125,26 @@
                 :gutter="0"
                 justify="start" align="top">
                 <el-col :span="12">
-                    <el-form-item  label="职务" prop="position">
+                    <el-form-item  label="科室" prop="position">
                         <el-input
                             v-model="form.position"
                             :disabled="false"
                               :readonly="false"
                               :style="{width:  '100%'}"
                               :clearable="true"
-                            placeholder="请输入职务">
+                            placeholder="请输入科室">
                         </el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                    <el-form-item  label="教学任职" prop="techingPost">
+                    <el-form-item  label="学历" prop="techingPost">
                         <el-input
                             v-model="form.techingPost"
                             :disabled="false"
                             :readonly="false"
                             :style="{width:  '100%'}"
                             :clearable="true"
-                            placeholder="请输入教学任职">
+                            placeholder="请输入学历">
                         </el-input>
                     </el-form-item>
                 </el-col>
@@ -304,18 +304,19 @@
                     // 领域
                     field: [{"min":0,"max":64,"message":"领域长度必须为0-64"}],
                     // 科室
-                    departmentId: [{"required":true,"message":"请选择科室"}],
+                    departmentId: [{"required":true,"message":"请选择栏目"}],
                     // 擅长
-                    goodAt: [{"required":true,"message":"擅长不能为空"},{"min":0,"max":64,"message":"擅长长度必须为0-64"}],
+                    // goodAt: [{"required":true,"message":"主要研究方向不能为空"},{"min":0,"max":200,"message":"主要研究方向长度必须为0-200"}],
                     // 职称
-                    technicalTitle: [{"required":true,"message":"职称不能为空"},{"min":0,"max":64,"message":"职称长度必须为0-64"}],
+                    technicalTitle: [{"required":true,"message":"职务不能为空"},{"min":0,"max":64,"message":"职务长度必须为0-64"}],
                     // 职务
-                    position: [{"min":0,"max":64,"message":"职务长度必须为0-64"}],
+                    position: [{"min":0,"max":64,"message":"科室长度必须为0-64"}],
                     // 教学任职
-                    techingPost: [{"min":0,"max":64,"message":"教学任职长度必须为0-64"}],
+                    techingPost: [{"min":0,"max":64,"message":"学历长度必须为0-64"}],
                     // 简介
                     introduce: [{"required":true,"message":"简介不能为空"}],
                     portrait: [{"required":true,"message":"头像不能为空"}],
+                    jobNumber: [{"required":true,"message":"工号不能为空"}]
                 },
 
             }

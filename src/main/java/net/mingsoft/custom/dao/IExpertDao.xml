@@ -71,7 +71,7 @@
 			<if test="contentType != null and contentType != ''"> and content_type LIKE CONCAT(CONCAT('%',#{contentType}),'%')</if>
 			<if test="contentType == ''"> and content_type = ''</if>
 		</where>
-		order by cms_category.category_sort, expert.content_sort
+		order by expert.content_sort
 	</select>
 
 	<select id="getExpert" resultMap="resultMapV" parameterType="net.mingsoft.custom.entity.ExpertEntity">
